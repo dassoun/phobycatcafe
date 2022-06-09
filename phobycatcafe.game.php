@@ -661,6 +661,17 @@ class phobycatcafe extends Table
         $sql = "UPDATE player SET first_chosen_played_order = null, second_chosen_played_order = null WHERE player_id = '$player_id'";
                 self::DbQuery($sql);
 
+        // Notify all players
+        self::notifyAllPlayers( "backToTurnDrawingPhase1", clienttranslate( '${player_name} has cancelled his action' ), array(
+            'player_id' => $player_id,
+            'player_name' => self::getActivePlayerName(),
+            'x' => -1,
+            'y' => -1
+            // 'first_chosen_dice_num' => $num_player_dice,
+            // 'first_chosen_dice_val' => $player_dice_face,
+            )
+        );
+
         // Go to next game state
         $this->gamestate->nextState( "locationDiceChoiceCancelled" );
     }

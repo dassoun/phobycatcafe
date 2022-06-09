@@ -1443,6 +1443,7 @@ function (dojo, declare) {
             dojo.subscribe( 'columnSubScoringMax', this, "notif_columnSubScoringMax" );
             dojo.subscribe( 'columnSubScoringMin', this, "notif_columnSubScoringMin" );
             dojo.subscribe('score', this, "notif_score");
+            dojo.subscribe('backToTurnDrawingPhase1', this, "notif_backToTurnDrawingPhase1");
         },  
         
         // TODO: from this point and below, you can write your game notifications handling methods
@@ -1702,8 +1703,20 @@ function (dojo, declare) {
             console.log( '**** Notification : columnSubScoringMin Ended' );
         },
 
-        notif_score: function(notif) {
+        notif_score: function( notif ) {
             this.scoreCtrl[notif.args.player_id].setValue(notif.args.player_score);
+        },
+
+        notif_backToTurnDrawingPhase1: function( notif ) {
+            console.log( '**** Notification : backToTurnDrawingPhase1' );
+
+            let player_id = notif.args.player_id;
+
+            for (var i=0; i<2; i++) {
+                dojo.style('dice_player_'+player_id+'_'+i, 'color', 'rgb(0, 0, 0)');
+            }
+
+            console.log( '**** Notification : backToTurnDrawingPhase1 Ended' );
         },
    });             
 });
