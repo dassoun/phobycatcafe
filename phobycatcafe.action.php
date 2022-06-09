@@ -100,6 +100,20 @@ class action_phobycatcafe extends APP_GameAction
         self::ajaxResponse( );
     }
 
+    public function cancelLocationDiceChoice() 
+    {
+        self::setAjaxMode();     
+
+        // Retrieve arguments
+        // Note: these arguments correspond to what has been sent through the javascript "ajaxcall" method
+        $player_id = self::getArg( "player_id", AT_posint, true );
+
+        // Then, call the appropriate method in your game logic, like "playCard" or "myAction"
+        $this->game->cancelLocationDiceChoice( $player_id );
+
+        self::ajaxResponse( );
+    }
+
     public function chooseDiceForLocation()
     {
         self::setAjaxMode();
@@ -116,6 +130,20 @@ class action_phobycatcafe extends APP_GameAction
         self::ajaxResponse( );
     }
 
+    public function cancelLocationChoice()
+    {
+        self::setAjaxMode();     
+
+        // Retrieve arguments
+        // Note: these arguments correspond to what has been sent through the javascript "ajaxcall" method
+        $player_id = self::getArg( "player_id", AT_posint, true );
+
+        // Then, call the appropriate method in your game logic, like "playCard" or "myAction"
+        $this->game->cancelLocationChoice( $player_id );
+
+        self::ajaxResponse( );
+    }
+
     public function chooseDrawingLocation()
     {
         self::setAjaxMode();     
@@ -128,6 +156,20 @@ class action_phobycatcafe extends APP_GameAction
 
         // Then, call the appropriate method in your game logic, like "playCard" or "myAction"
         $this->game->chooseDrawingLocation( $player_id, $x, $y );
+
+        self::ajaxResponse( );
+    }
+
+    public function cancelShapeChoice()
+    {
+        self::setAjaxMode();     
+
+        // Retrieve arguments
+        // Note: these arguments correspond to what has been sent through the javascript "ajaxcall" method
+        $player_id = self::getArg( "player_id", AT_posint, true );
+
+        // Then, call the appropriate method in your game logic, like "playCard" or "myAction"
+        $this->game->cancelShapeChoice( $player_id );
 
         self::ajaxResponse( );
     }

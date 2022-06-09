@@ -652,6 +652,52 @@ class phobycatcafe extends Table
         $this->gamestate->nextState( "diceForLocationChosen" );
     }
 
+    function cancelLocationDiceChoice( $player_id ) {
+        // Check that this is player's turn and that it is a "possible action" at this game state (see states.inc.php)
+        self::checkAction( 'cancelLocationDiceChoice' ); 
+
+        $player_id = self::getActivePlayerId();
+
+        $sql = "UPDATE player SET first_chosen_played_order = null, second_chosen_played_order = null WHERE player_id = '$player_id'";
+                self::DbQuery($sql);
+
+        // Go to next game state
+        $this->gamestate->nextState( "locationDiceChoiceCancelled" );
+    }
+
+    function cancelLocationChoice( $player_id ) {
+        // Check that this is player's turn and that it is a "possible action" at this game state (see states.inc.php)
+        self::checkAction( 'cancelLocationChoice' ); 
+
+        $player_id = self::getActivePlayerId();
+
+        $sql = "UPDATE player SET first_chosen_played_order = null, second_chosen_played_order = null, location_chosen = null WHERE player_id = '$player_id'";
+                self::DbQuery($sql);
+
+        // Go to next game state
+        $this->gamestate->nextState( "locationChoiceCancelled" );
+    }
+
+    function cancelShapeChoice( $player_id ) {
+        // Check that this is player's turn and that it is a "possible action" at this game state (see states.inc.php)
+        self::checkAction( 'cancelShapeChoice' ); 
+
+        $player_id = self::getActivePlayerId();
+
+        $sql = "SELECT location_chosen FROM player WHERE player_id = '$player_id'";
+        $location = self::getUniqueValueFromDB($sql);
+        $locations = explode(",", $location);
+
+        $sql = "UPDATE drawing SET state = 0 WHERE player_id = '$player_id' AND coord_x = '$locations[0]' AND coord_y = '$locations[1]'";
+        self::DbQuery($sql);
+
+        $sql = "UPDATE player SET first_chosen_played_order = null, second_chosen_played_order = null, location_chosen = null WHERE player_id = '$player_id'";
+        self::DbQuery($sql);
+
+        // Go to next game state
+        $this->gamestate->nextState( "shapeChoiceCancelled" );
+    }
+
     function chooseDrawingLocation( $player_id, $x, $y ) {
         self::checkAction( 'chooseDrawingLocation' ); 
 

@@ -131,8 +131,8 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} must choose where to draw.'),
         "type" => "activeplayer",
         "args" => "argPlayerTurnDrawingPhase2",
-        "possibleactions" => array( "chooseDrawingLocation" ),
-        "transitions" => array( "drawingLocationChosen" => 10 )
+        "possibleactions" => array( "chooseDrawingLocation", "cancelLocationDiceChoice" ),
+        "transitions" => array( "drawingLocationChosen" => 10, "locationDiceChoiceCancelled" => 7 )
     ),
 
     10 => array(
@@ -142,8 +142,8 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} must choose a shape.'),
         "type" => "activeplayer",
         "args" => "argPlayerTurnDrawingPhase3",
-        "possibleactions" => array( "chooseShape" ),
-        "transitions" => array( "shapeChosen" => 12, "chooseCat" => 11 )
+        "possibleactions" => array( "chooseShape", "cancelLocationChoice" ),
+        "transitions" => array( "shapeChosen" => 12, "chooseCat" => 11, "locationChoiceCancelled" => 7 )
     ),
 
     11 => array(
@@ -153,8 +153,8 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} must choose a cat.'),
         "type" => "activeplayer",
         "args" => "argPlayerTurnCatSelection",
-        "possibleactions" => array( "chooseCat" ),
-        "transitions" => array( "catChosen" => 12 )
+        "possibleactions" => array( "chooseCat", "cancelShapeChoice" ),
+        "transitions" => array( "catChosen" => 12, "shapeChoiceCancelled" => 7 )
     ),
 
     12 => array(

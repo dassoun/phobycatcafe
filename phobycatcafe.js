@@ -593,6 +593,18 @@ function (dojo, declare) {
                     case 'playerTurnDrawingPhase1' :
                         this.addActionButton( 'button_pass', _('Pass'), (evt) => this.onPassDrawing(evt, args) ); 
                         break;
+
+                    case 'playerTurnDrawingPhase2' :
+                        this.addActionButton( 'button_cancel_location_dice_choice', _('Cancel'), (evt) => this.onCancelLocationDiceChoice(evt, args) ); 
+                        break;
+
+                    case 'playerTurnDrawingPhase3' :
+                        this.addActionButton( 'button_cancel_location_choice', _('Cancel'), (evt) => this.onCancelLocationChoice(evt, args) ); 
+                        break;
+
+                    case 'playerTurnCatSelection' :
+                        this.addActionButton( 'button_cancel_shape_choice', _('Cancel'), (evt) => this.onCancelShapeChoice(evt, args) ); 
+                        break;
                 }
             }
         },
@@ -1284,6 +1296,99 @@ function (dojo, declare) {
                 { return; }
 
             this.ajaxcall( "/phobycatcafe/phobycatcafe/pass.html", { 
+                                                                    lock: true, 
+                                                                    player_id: args.player_id
+                                                                 }, 
+                         this, function( result ) {
+                            
+                            // What to do after the server call if it succeeded
+                            // (most of the time: nothing)
+                            
+                         }, function( is_error) {
+
+                            // What to do after the server call in anyway (success or failure)
+                            // (most of the time: nothing)
+
+                         } );
+        },
+
+        onCancelLocationDiceChoice: function( evt, args )
+        {
+            console.log( 'onCancelLocationDiceChoice' );
+            console.log( '****************' );
+            console.log( args );
+            console.log( '****************' );
+            
+            // Preventing default browser reaction
+            dojo.stopEvent( evt );
+
+            // Check that this action is possible (see "possibleactions" in states.inc.php)
+            if( ! this.checkAction( 'cancelLocationDiceChoice' ) )
+                { return; }
+            
+            this.ajaxcall( "/phobycatcafe/phobycatcafe/cancelLocationDiceChoice.html", { 
+                                                                    lock: true, 
+                                                                    player_id: args.player_id
+                                                                 }, 
+                         this, function( result ) {
+                            
+                            // What to do after the server call if it succeeded
+                            // (most of the time: nothing)
+                            
+                         }, function( is_error) {
+
+                            // What to do after the server call in anyway (success or failure)
+                            // (most of the time: nothing)
+
+                         } );
+        },
+
+        onCancelLocationChoice: function( evt, args )
+        {
+            console.log( 'onCancelLocationChoice' );
+            console.log( '****************' );
+            console.log( args );
+            console.log( '****************' );
+            
+            // Preventing default browser reaction
+            dojo.stopEvent( evt );
+
+            // Check that this action is possible (see "possibleactions" in states.inc.php)
+            if( ! this.checkAction( 'cancelLocationChoice' ) )
+                { return; }
+            
+            this.ajaxcall( "/phobycatcafe/phobycatcafe/cancelLocationChoice.html", { 
+                                                                    lock: true, 
+                                                                    player_id: args.player_id
+                                                                 }, 
+                         this, function( result ) {
+                            
+                            // What to do after the server call if it succeeded
+                            // (most of the time: nothing)
+                            
+                         }, function( is_error) {
+
+                            // What to do after the server call in anyway (success or failure)
+                            // (most of the time: nothing)
+
+                         } );
+        },
+
+        onCancelShapeChoice: function( evt, args )
+        {
+            console.log( 'onCancelShapeChoice' );
+            console.log( '****************' );
+            console.log( args );
+            console.log( '****************' );
+            
+            // Preventing default browser reaction
+            dojo.stopEvent( evt );
+
+            // Check that this action is possible (see "possibleactions" in states.inc.php)
+            if( ! this.checkAction( 'cancelShapeChoice' ) )
+                { return; }
+            
+            this.ajaxcall( "/phobycatcafe/phobycatcafe/cancelShapeChoice.html", { 
                                                                     lock: true, 
                                                                     player_id: args.player_id
                                                                  }, 
