@@ -682,8 +682,26 @@ class phobycatcafe extends Table
 
         $player_id = self::getActivePlayerId();
 
+        $sql = "SELECT location_chosen FROM player WHERE player_id = '$player_id'";
+        $location = self::getUniqueValueFromDB($sql);
+        $locations = explode(",", $location);
+
+        $sql = "UPDATE drawing SET state = 0 WHERE player_id = '$player_id' AND coord_x = '$locations[0]' AND coord_y = '$locations[1]'";
+        self::DbQuery($sql);
+
         $sql = "UPDATE player SET first_chosen_played_order = null, second_chosen_played_order = null, location_chosen = null WHERE player_id = '$player_id'";
-                self::DbQuery($sql);
+        self::DbQuery($sql);
+
+        // Notify all players
+        self::notifyAllPlayers( "backToTurnDrawingPhase1", clienttranslate( '${player_name} has cancelled his action' ), array(
+            'player_id' => $player_id,
+            'player_name' => self::getActivePlayerName(),
+            'x' => $locations[0],
+            'y' => $locations[1]
+            // 'first_chosen_dice_num' => $num_player_dice,
+            // 'first_chosen_dice_val' => $player_dice_face,
+            )
+        );
 
         // Go to next game state
         $this->gamestate->nextState( "locationChoiceCancelled" );
@@ -705,6 +723,17 @@ class phobycatcafe extends Table
         $sql = "UPDATE player SET first_chosen_played_order = null, second_chosen_played_order = null, location_chosen = null WHERE player_id = '$player_id'";
         self::DbQuery($sql);
 
+        // Notify all players
+        self::notifyAllPlayers( "backToTurnDrawingPhase1", clienttranslate( '${player_name} has cancelled his action' ), array(
+            'player_id' => $player_id,
+            'player_name' => self::getActivePlayerName(),
+            'x' => $locations[0],
+            'y' => $locations[1]
+            // 'first_chosen_dice_num' => $num_player_dice,
+            // 'first_chosen_dice_val' => $player_dice_face,
+            )
+        );
+        
         // Go to next game state
         $this->gamestate->nextState( "shapeChoiceCancelled" );
     }

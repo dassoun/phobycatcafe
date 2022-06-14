@@ -555,7 +555,14 @@ function (dojo, declare) {
                 // });
 
                 dojo.forEach(this.connections, dojo.disconnect);
-                this.connections = []; 
+                this.connections = [];
+
+                for (var i=1; i<=6; i++) {
+                    // let shape_elmt_id = 'shape_selection_'+player_id+'_'+i;
+                    // dojo.removeClass(shape_elmt_id, 'ctc_shape_selectionnable');
+                    let cat_elmt_id = 'cat_selection_'+player_id+'_'+i;
+                    dojo.removeClass(cat_elmt_id, 'ctc_cat_selectionnable');
+                }
 
                 break;
 
@@ -1713,7 +1720,34 @@ function (dojo, declare) {
             let player_id = notif.args.player_id;
 
             for (var i=0; i<2; i++) {
-                dojo.style('dice_player_'+player_id+'_'+i, 'color', 'rgb(0, 0, 0)');
+                let elmt_id = 'dice_player_'+player_id+'_'+i;
+
+                console.log( dojo.style(elmt_id, 'color') );
+                dojo.style(elmt_id, 'color', 'rgb(0, 0, 0)');
+            }
+
+            let x = notif.args.x;
+            let y = notif.args.y;
+
+            console.log( '---------- x='+x+', y='+y+' -------------' );
+
+            if (x >= 0 && y >= 0) {
+                let elmt_id = 'square_'+player_id+'_'+x+'_'+y;
+                for (var i=1; i<7; i++) {
+                    dojo.removeClass(elmt_id, 'ctc_square_'+i);
+
+                    console.log( 'ctc_square_'+i );
+                }
+                dojo.removeClass(elmt_id, 'ctc_square_selected');
+                
+                dojo.addClass(elmt_id, 'ctc_square_0');
+            }
+
+            for (var i=1; i<=6; i++) {
+                let shape_elmt_id = 'shape_selection_'+player_id+'_'+i;
+                dojo.removeClass(shape_elmt_id, 'ctc_shape_selectionnable');
+                let cat_elmt_id = 'cat_selection_'+player_id+'_'+i;
+                dojo.removeClass(cat_elmt_id, 'ctc_cat_selectionnable');
             }
 
             console.log( '**** Notification : backToTurnDrawingPhase1 Ended' );
