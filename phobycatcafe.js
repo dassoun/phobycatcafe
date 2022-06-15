@@ -557,11 +557,14 @@ function (dojo, declare) {
                 dojo.forEach(this.connections, dojo.disconnect);
                 this.connections = [];
 
-                for (var i=1; i<=6; i++) {
-                    // let shape_elmt_id = 'shape_selection_'+player_id+'_'+i;
-                    // dojo.removeClass(shape_elmt_id, 'ctc_shape_selectionnable');
-                    let cat_elmt_id = 'cat_selection_'+player_id+'_'+i;
-                    dojo.removeClass(cat_elmt_id, 'ctc_cat_selectionnable');
+                playersBasicInfos = this.gamedatas.gamestate.args.playersBasicInfos;
+                for ( var player_id in playersBasicInfos ) {
+                    for (var i=1; i<=6; i++) {
+                        // let shape_elmt_id = 'shape_selection_'+player_id+'_'+i;
+                        // dojo.removeClass(shape_elmt_id, 'ctc_shape_selectionnable');
+                        let cat_elmt_id = 'cat_selection_'+player_id+'_'+i;
+                        dojo.removeClass(cat_elmt_id, 'ctc_cat_selectionnable');
+                    }
                 }
 
                 break;
