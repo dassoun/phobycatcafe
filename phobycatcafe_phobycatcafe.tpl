@@ -55,6 +55,8 @@ var jstpl_some_game_item='<div class="my_game_item" id="my_game_item_${MY_ITEM_I
 */
 var jstpl_player_board='<div class="ctc_player_board" id="player_board_${player}"></div>';
 
+var jstpl_player_name='<div class="ctc_player_name" id="player_name_${player}"></div>';
+
 var jstpl_square='<div class="ctc_square ctc_square_${value}" id="square_${player}_${x}_${y}"></div>';
 
 var jstpl_square_tmp='<div class="ctc_square ctc_square_${value}" id="square_tmp_${x}_${y}"></div>';

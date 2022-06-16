@@ -66,6 +66,13 @@ function (dojo, declare) {
 
                 } ), $ ( 'ctc_game_area' ) );
 
+                dojo.place( this.format_block('jstpl_player_name', {
+                    player:player_id,
+                } ), $ ( 'player_board_' + player_id) );
+
+                this.slideToObjectPos( $('player_name_'+player_id), $('player_board_'+player_id), 230, 5, 10 ).play();
+                $('player_name_'+player_id).innerHTML = gamedatas.players[player_id].name
+
                 // Setup squares
                 // for( var id in gamedatas.squarespositions )
                 // {

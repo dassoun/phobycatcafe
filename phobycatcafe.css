@@ -60,6 +60,13 @@
     background-image: url( 'img/catcafe_sheet.jpg' );
 }
 
+.ctc_player_name {
+    position: relative;
+    margin: auto;
+    width: 100px;
+	height: 40px;
+}
+
 .ctc_square {
     position: relative;
     width: 61px;
