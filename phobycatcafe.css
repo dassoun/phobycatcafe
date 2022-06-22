@@ -181,16 +181,16 @@
     position: relative;
     height: 30px;
     width: 55px;
-    border: 3px;
+    border: 1px;
     border-style: dashed;
     border-radius: 5px;
 }
 
 .ctc_shape_selectionnable {
     cursor: pointer;
-    /* border: 3px;
+    /*border: 1px;
     border-style: dashed;
-    border-radius: 5px; */
+    border-radius: 5px;*/
 }
 
 .ctc_cat_footprint {
