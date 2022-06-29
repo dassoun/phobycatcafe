@@ -73,10 +73,33 @@ $stats_type = array(
     // Statistics existing for each player
     "player" => array(
 
-        "turns_number" => array("id"=> 10,
+        "turns_number" => array("id" => 10,
                     "name" => totranslate("Number of turns"),
                     "type" => "int" ),
     
+        "cat_house" => array("id" => 20,
+                    "name" => totranslate("Cat house"),
+                    "type" => "int" ),
+        
+        "ball_of_yarn" => array("id" => 30,
+                    "name" => totranslate("Ball of yarn"),
+                    "type" => "int" ),
+        
+        "butterfly_toy" => array("id" => 40,
+                    "name" => totranslate("Butterfly toy"),
+                    "type" => "int" ),
+
+        "food_bowl" => array("id" => 50,
+                    "name" => totranslate("Food bowl"),
+                    "type" => "int" ),
+
+        "cushion" => array("id" => 60,
+                    "name" => totranslate("Cushion"),
+                    "type" => "int" ),
+
+        "mouse_toy" => array("id" => 70,
+                    "name" => totranslate("Mouse toy"),
+                    "type" => "int" ),
 /*
         Examples:    
         

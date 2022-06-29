@@ -337,6 +337,25 @@ class phobycatcafe extends Table
 
     function getButterflyToyScore($player_id) {
 
+        $result = array();
+
+        $sql = "SELECT coord_x, coord_y, state FROM drawing WHERE player_id = '$player_id' ORDER BY coord_x, coord_y";
+        $player_grid = self::getDoubleKeyCollectionFromDB( $sql, true );
+
+        self::dump( "grille", $player_grid );
+
+        $butterfly_toy = 2;
+        $nb_butterfly_toy = 0;
+
+        foreach($player_grid as $key => $value) {
+            foreach($value as $key2 => $value2) {
+                if ($value2 == $butterfly_toy) {
+                    $nb_butterfly_toy += 1;
+                }
+            }
+        }
+
+        return ($nb_butterfly_toy * 3);
     }
 
     function getFoodBowlScore($player_id, $x, $y, $cat) {
