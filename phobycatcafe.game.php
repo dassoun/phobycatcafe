@@ -1254,6 +1254,10 @@ class phobycatcafe extends Table
 
         $nbCompletedColumns = 0;
 
+        $player_score = 0;
+        $sql = "SELECT (score_cat_1 + score_cat_2 + score_cat_3 + score_cat_4 + score_cat_5 + score_cat_6 + score_col_1 + score_col_2 + score_col_3 + score_col_4 + score_col_5) AS player_score FROM player WHERE player_id = '$active_player_id'";
+        $player_score = self::getUniqueValueFromDB( $sql );
+
 //        $players = $this->loadPlayersBasicInfos();
 
 //        foreach ($players as $player_id => $info) {
@@ -1283,7 +1287,8 @@ class phobycatcafe extends Table
 
                             self::notifyAllPlayers( "score", "", array(
                                 'player_id' => $active_player_id,
-                                'player_score' => $this->gameConstants["COL_SUB_SCORING_COL_MAX"][$i]
+                                // 'player_score' => $this->gameConstants["COL_SUB_SCORING_COL_MAX"][$i]
+                                'player_score' => $player_score
                                 )
                             );
                         } else {
@@ -1299,7 +1304,8 @@ class phobycatcafe extends Table
 
                             self::notifyAllPlayers( "score", "", array(
                                 'player_id' => $active_player_id,
-                                'player_score' => $this->gameConstants["COL_SUB_SCORING_COL_MIN"][$i]
+                                // 'player_score' => $this->gameConstants["COL_SUB_SCORING_COL_MIN"][$i]
+                                'player_score' => $player_score
                                 )
                             );
                         }
