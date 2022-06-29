@@ -327,65 +327,16 @@ class phobycatcafe extends Table
                 }
             }
         }
-        // // column x
-        // if (array_key_exists($x, $player_grid)) {
-        //     if (array_key_exists(($y-1), $player_grid[$x])) {
-        //         if ($player_grid[$x][$y-1] == $cat) {
-        //             $nb_shape += 1;
-        //         }
-        //     }
-        //     if (array_key_exists(($y+1), $player_grid[$x])) {
-        //         if ($player_grid[$x][$y+1] == $cat) {
-        //             $nb_shape += 1;
-        //         }
-        //     }
-        // }
-
-        // if (($x % 2) == 0) {
-        //     // column x-1
-        //     for ($i=0; $i<2; $i++) {
-        //         if (array_key_exists($x-1, $player_grid)) {
-        //             if (array_key_exists(($y+$i), $player_grid[$x-1])) {
-        //                 if ($player_grid[$x-1][$y+$i] == $cat) {
-        //                     $nb_shape += 1;
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     // column x+1
-        //     for ($i=0; $i<2; $i++) {
-        //         if (array_key_exists($x+1, $player_grid)) {
-        //             if (array_key_exists(($y+$i), $player_grid[$x+1])) {
-        //                 if ($player_grid[$x+1][$y+$i] == $cat) {
-        //                     $nb_shape += 1;
-        //                 }
-        //             }
-        //         }
-        //     }
-        // } else {
-        //     // column x-1
-        //     for ($i=-1; $i<1; $i++) {
-        //         if (array_key_exists($x-1, $player_grid)) {
-        //             if (array_key_exists(($y+$i), $player_grid[$x-1])) {
-        //                 if ($player_grid[$x-1][$y+$i] == $cat) {
-        //                     $nb_shape += 1;
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     // column x+1
-        //     for ($i=-1; $i<1; $i++) {
-        //         if (array_key_exists($x+1, $player_grid)) {
-        //             if (array_key_exists(($y+$i), $player_grid[$x+1])) {
-        //                 if ($player_grid[$x+1][$y+$i] == $cat) {
-        //                     $nb_shape += 1;
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
 
         return ($nb_shape * 2);
+    }
+
+    function getBallOfYarnScore($player_id) {
+        
+    }
+
+    function getButterflyToyScore($player_id) {
+
     }
 
     function getFoodBowlScore($player_id, $x, $y, $cat) {
@@ -465,6 +416,14 @@ class phobycatcafe extends Table
         return ($food_bowl_score);
     }
 
+    function getCushionScore($player_id) {
+
+    }
+
+    function getMouseToyScore($player_id) {
+
+    }
+    
     function rollDices() 
     {
         $values = array();
