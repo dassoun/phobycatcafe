@@ -90,6 +90,16 @@ class phobycatcafe extends Table
         //self::initStat( 'table', 'table_teststat1', 0 );    // Init a table statistics
         //self::initStat( 'player', 'player_teststat1', 0 );  // Init a player statistics (for all players)
 
+        // initStat( "player", "turns_number", 0 );
+        self::initStat( "player", "cat_house", 0 );
+        self::initStat( "player", "ball_of_yarn", 0 );
+        self::initStat( "player", "butterfly_toy", 0 );
+        self::initStat( "player", "food_bowl", 0 );
+        self::initStat( "player", "cushion", 0 );
+        self::initStat( "player", "mouse_toy", 0 );
+        self::initStat( "player", "columns", 0 );
+        self::initStat( "player", "cat_footprints", 0 );
+
         // TODO: setup the initial game situation here
 
         $player_order = self::getNextPlayerTable();
@@ -308,12 +318,11 @@ class phobycatcafe extends Table
         return $result;
     }
 
-    function getCatHouseScore($player_id, $x, $y, $cat) {
+    function getCatHouseScore($player_id, $cat) {
 
         $result = array();
 
         $sql = "SELECT coord_x, coord_y, state FROM drawing WHERE player_id = '$player_id' ORDER BY coord_x, coord_y";
-        //$player_grid = self::getObjectListFromDB($sql);
         $player_grid = self::getDoubleKeyCollectionFromDB( $sql, true );
 
         self::dump( "grille", $player_grid );
@@ -328,121 +337,281 @@ class phobycatcafe extends Table
             }
         }
 
+        self::dump( "getCatHouseScore : ", $nb_shape * 2 );
         return ($nb_shape * 2);
+    }
+
+    function getCatHouseScoreTotal($player_id) {
+
+        $sql = "SELECT (score_cat_1 + score_cat_2 + score_cat_3 + score_cat_4 + score_cat_5 + score_cat_6) FROM player WHERE player_id = '$player_id'";
+        $cat_house_score = self::getUniqueValueFromDB( $sql );
+
+        self::dump( "getCatHouseScoreTotal : ", $cat_house_score );
+        return ($cat_house_score);
     }
 
     function getBallOfYarnScore($player_id) {
         
+        self::debug( "+++++++++++++++++ getBallOfYarnScore" );
+
+        $sql = "SELECT player_id id FROM player";
+        $players = self::getObjectListFromDB( $sql );
+
+        self::dump( "players : ", $players );
+
+        $ball_of_yarn = array();
+        $max = array(0, 0, 0, 0, 0);
+
+        foreach ($players as $key => $value) {
+
+            $sql = "SELECT coord_x, coord_y, state FROM drawing WHERE player_id = '".$value["id"]."' ORDER BY coord_x, coord_y";
+            $player_grid = self::getDoubleKeyCollectionFromDB( $sql, true );
+
+            self::dump( "value[\"id\"] : ", $value["id"] );
+
+            $ball_of_yarn[$value["id"]] = array(0, 0, 0, 0, 0);
+
+            foreach($player_grid as $x => $value) {
+                $count = 0;
+                self::debug( "x = /" . $x . "/" );
+                foreach($value as $y => $value2) {
+                    if ($value2 == $this->gameConstants["SHAPE_BALL_OF_YARN"]) {
+                        $count++;
+                    }
+                }
+                self::dump( "value[\"id\"] : ", $value["id"] );
+                self::debug( "x = /" . $x . "/" );
+                self::dump( "ball_of_yarn : ", $ball_of_yarn );
+                
+                $ball_of_yarn[$value["id"]][$x] += $count;
+
+                if ($count > $max[$x]) {
+                    $max[$x] = $count;
+                }
+            }
+        }
+
+        self::dump( "ball_of_yarn : ", $ball_of_yarn );
+        self::dump( "max : ", $max );
+
+        $res = 0;
+
+        for ($i=0; $i<5; $i++) {
+            if ($ball_of_yarn[$player_id][$i] > 0) {
+                if ($ball_of_yarn[$player_id][$i] == $max[$i]) {
+                    $res += 8;
+                } else {
+                    $res += 3;
+                }
+            }
+        }
+
+        self::dump( "res : ", $res );
+
+        return $res;
     }
 
     function getButterflyToyScore($player_id) {
 
-        $result = array();
-
         $sql = "SELECT coord_x, coord_y, state FROM drawing WHERE player_id = '$player_id' ORDER BY coord_x, coord_y";
         $player_grid = self::getDoubleKeyCollectionFromDB( $sql, true );
 
-        self::dump( "grille", $player_grid );
-
-        $butterfly_toy = 2;
         $nb_butterfly_toy = 0;
 
         foreach($player_grid as $key => $value) {
             foreach($value as $key2 => $value2) {
-                if ($value2 == $butterfly_toy) {
+                if ($value2 == $this->gameConstants["SHAPE_BUTTERFLY_TOY"]) {
                     $nb_butterfly_toy += 1;
                 }
             }
         }
+
+        self::dump( "getButterflyToyScore : ", $nb_butterfly_toy * 3 );
 
         return ($nb_butterfly_toy * 3);
     }
 
     function getFoodBowlScore($player_id, $x, $y, $cat) {
 
-        $result = array();
-
         $sql = "SELECT coord_x, coord_y, state FROM drawing WHERE player_id = '$player_id' ORDER BY coord_x, coord_y";
-        //$player_grid = self::getObjectListFromDB($sql);
         $player_grid = self::getDoubleKeyCollectionFromDB( $sql, true );
-
-        self::dump( "grid", $player_grid );
-
-        $food_bowl_array = array(0, 0, 0, 0, 0, 0);
-
-        $nb_shape = 0;
-
-        // column x
-        if (array_key_exists($x, $player_grid)) {
-            if (array_key_exists(($y-1), $player_grid[$x])) {
-                $shape = $player_grid[$x][$y-1];
-                $food_bowl_array[$shape - 1] = 1;
-            }
-            if (array_key_exists(($y+1), $player_grid[$x])) {
-                if ($player_grid[$x][$y+1] == $cat) {
-                    $shape = $player_grid[$x][$y+1];
-                    $food_bowl_array[$shape - 1] = 1;
-                }
-            }
-        }
-
-        if (($x % 2) == 0) {
-            // column x-1
-            for ($i=0; $i<2; $i++) {
-                if (array_key_exists($x-1, $player_grid)) {
-                    if (array_key_exists(($y+$i), $player_grid[$x-1])) {
-                        $shape = $player_grid[$x-1][$y+$i];
-                        $food_bowl_array[$shape - 1] = 1;
-                    }
-                }
-            }
-            // column x+1
-            for ($i=0; $i<2; $i++) {
-                if (array_key_exists($x+1, $player_grid)) {
-                    if (array_key_exists(($y+$i), $player_grid[$x+1])) {
-                        $shape = $player_grid[$x+1][$y+$i];
-                        $food_bowl_array[$shape - 1] = 1;
-                    }
-                }
-            }
-        } else {
-            // column x-1
-            for ($i=-1; $i<1; $i++) {
-                if (array_key_exists($x-1, $player_grid)) {
-                    if (array_key_exists(($y+$i), $player_grid[$x-1])) {
-                        $shape = $player_grid[$x-1][$y+$i];
-                        $food_bowl_array[$shape - 1] = 1;
-                    }
-                }
-            }
-            // column x+1
-            for ($i=-1; $i<1; $i++) {
-                if (array_key_exists($x+1, $player_grid)) {
-                    if (array_key_exists(($y+$i), $player_grid[$x+1])) {
-                        $shape = $player_grid[$x+1][$y+$i];
-                        $food_bowl_array[$shape - 1] = 1;
-                    }
-                }
-            }
-        }
 
         $food_bowl_score = 0;
 
-        foreach($food_bowl_array as $value) {
-            $food_bowl_score += $value;
+        foreach($player_grid as $x => $value) {
+            foreach($value as $y => $value2) {
+                if ($value2 == $this->gameConstants["SHAPE_FOOD_BOWL"]) {
+                    $food_bowl_array = array(0, 0, 0, 0, 0, 0);
+
+                    $nb_shape = 0;
+
+                    // column x
+                    // if (array_key_exists($x, $player_grid)) {
+                        if (array_key_exists(($y-1), $player_grid[$x])) {
+                            $shape = $player_grid[$x][$y-1];
+                            $food_bowl_array[$shape - 1] = 1;
+                        }
+                        if (array_key_exists(($y+1), $player_grid[$x])) {
+                            if ($player_grid[$x][$y+1] == $cat) {
+                                $shape = $player_grid[$x][$y+1];
+                                $food_bowl_array[$shape - 1] = 1;
+                            }
+                        }
+                    // }
+
+                    if (($x % 2) == 0) {
+                        // column x-1
+                        for ($i=0; $i<2; $i++) {
+                            if (array_key_exists($x-1, $player_grid)) {
+                                if (array_key_exists(($y+$i), $player_grid[$x-1])) {
+                                    $shape = $player_grid[$x-1][$y+$i];
+                                    $food_bowl_array[$shape - 1] = 1;
+                                }
+                            }
+                        }
+                        // column x+1
+                        for ($i=0; $i<2; $i++) {
+                            if (array_key_exists($x+1, $player_grid)) {
+                                if (array_key_exists(($y+$i), $player_grid[$x+1])) {
+                                    $shape = $player_grid[$x+1][$y+$i];
+                                    $food_bowl_array[$shape - 1] = 1;
+                                }
+                            }
+                        }
+                    } else {
+                        // column x-1
+                        for ($i=-1; $i<1; $i++) {
+                            if (array_key_exists($x-1, $player_grid)) {
+                                if (array_key_exists(($y+$i), $player_grid[$x-1])) {
+                                    $shape = $player_grid[$x-1][$y+$i];
+                                    $food_bowl_array[$shape - 1] = 1;
+                                }
+                            }
+                        }
+                        // column x+1
+                        for ($i=-1; $i<1; $i++) {
+                            if (array_key_exists($x+1, $player_grid)) {
+                                if (array_key_exists(($y+$i), $player_grid[$x+1])) {
+                                    $shape = $player_grid[$x+1][$y+$i];
+                                    $food_bowl_array[$shape - 1] = 1;
+                                }
+                            }
+                        }
+                    }
+
+                    foreach($food_bowl_array as $value) {
+                        $food_bowl_score += $value;
+                    }
+                }
+            }
         }
+
+        // $food_bowl_array = array(0, 0, 0, 0, 0, 0);
+
+        // $nb_shape = 0;
+
+        // // column x
+        // if (array_key_exists($x, $player_grid)) {
+        //     if (array_key_exists(($y-1), $player_grid[$x])) {
+        //         $shape = $player_grid[$x][$y-1];
+        //         $food_bowl_array[$shape - 1] = 1;
+        //     }
+        //     if (array_key_exists(($y+1), $player_grid[$x])) {
+        //         if ($player_grid[$x][$y+1] == $cat) {
+        //             $shape = $player_grid[$x][$y+1];
+        //             $food_bowl_array[$shape - 1] = 1;
+        //         }
+        //     }
+        // }
+
+        // if (($x % 2) == 0) {
+        //     // column x-1
+        //     for ($i=0; $i<2; $i++) {
+        //         if (array_key_exists($x-1, $player_grid)) {
+        //             if (array_key_exists(($y+$i), $player_grid[$x-1])) {
+        //                 $shape = $player_grid[$x-1][$y+$i];
+        //                 $food_bowl_array[$shape - 1] = 1;
+        //             }
+        //         }
+        //     }
+        //     // column x+1
+        //     for ($i=0; $i<2; $i++) {
+        //         if (array_key_exists($x+1, $player_grid)) {
+        //             if (array_key_exists(($y+$i), $player_grid[$x+1])) {
+        //                 $shape = $player_grid[$x+1][$y+$i];
+        //                 $food_bowl_array[$shape - 1] = 1;
+        //             }
+        //         }
+        //     }
+        // } else {
+        //     // column x-1
+        //     for ($i=-1; $i<1; $i++) {
+        //         if (array_key_exists($x-1, $player_grid)) {
+        //             if (array_key_exists(($y+$i), $player_grid[$x-1])) {
+        //                 $shape = $player_grid[$x-1][$y+$i];
+        //                 $food_bowl_array[$shape - 1] = 1;
+        //             }
+        //         }
+        //     }
+        //     // column x+1
+        //     for ($i=-1; $i<1; $i++) {
+        //         if (array_key_exists($x+1, $player_grid)) {
+        //             if (array_key_exists(($y+$i), $player_grid[$x+1])) {
+        //                 $shape = $player_grid[$x+1][$y+$i];
+        //                 $food_bowl_array[$shape - 1] = 1;
+        //             }
+        //         }
+        //     }
+        // }
+
+        // $food_bowl_score = 0;
+
+        // foreach($food_bowl_array as $value) {
+        //     $food_bowl_score += $value;
+        // }
 
         return ($food_bowl_score);
     }
 
     function getCushionScore($player_id) {
 
+        $sql = "SELECT coord_x, coord_y, state FROM drawing WHERE player_id = '$player_id' ORDER BY coord_x, coord_y";
+        $player_grid = self::getDoubleKeyCollectionFromDB( $sql, true );
+
+        self::dump( "grille", $player_grid );
+
+        $cushion_score = 0;
+
+        foreach($player_grid as $x => $value) {
+            foreach($value as $y => $value2) {
+                if ($value2 == $this->gameConstants["SHAPE_CUSHION"]) {
+                    $cushion_score += ($y + 1);
+                }
+            }
+        }
+
+        self::dump( "cushion_score", $cushion_score );
+        return ($cushion_score);
     }
 
     function getMouseToyScore($player_id) {
 
     }
+
+    function getColumnsScore($player_id) {
+        $sql = "SELECT (score_col_1 + score_col_2 + score_col_3 + score_col_4 + score_col_5) FROM player WHERE player_id = '".$player_id."'";
+        $res = self::getUniqueValueFromDB( $sql );
+
+        return $res;
+    }
     
+    function getCatFootprintsScore($player_id) {
+        $sql = "SELECT footprint_available FROM player WHERE player_id = '".$player_id."'";
+        $res = self::getUniqueValueFromDB( $sql );
+
+        return $res;
+    }
+
     function rollDices() 
     {
         $values = array();
@@ -869,14 +1038,14 @@ class phobycatcafe extends Table
         $sql = "SELECT location_chosen, score_cat_$cat FROM player WHERE player_id = '$player_id'";
         $player_info = self::getObjectFromDB( $sql );
 
-        if ($player_info["score_cat_$cat"] !== null) {
+        if ($player_info["score_cat_$cat"] != 0) {
             throw new BgaUserException( self::_(clienttranslate("You can't select this cat.")) );
         } else {
             $coord = explode(",", $player_info["location_chosen"]);
             $x = $coord[0];
             $y = $coord[1];
 
-            $score_cat = self::getCatHouseScore($player_id, $x, $y, $cat);
+            $score_cat = self::getCatHouseScore($player_id, $cat);
             $sql = "UPDATE player SET score_cat_$cat = $score_cat WHERE player_id = '$player_id'";
             self::DbQuery($sql);
         }
@@ -1249,7 +1418,7 @@ class phobycatcafe extends Table
                     self::trace( "---- nb = $res / ".$this->gameConstants["COL_FLOORS_NUMBER"][$i]." ----" );
 
                     if ($res == $this->gameConstants["COL_FLOORS_NUMBER"][$i]) {
-                        $sql = "SELECT COUNT(*) FROM player WHERE score_col_".($i+1)." IS NOT NULL";
+                        $sql = "SELECT COUNT(*) FROM player WHERE score_col_".($i+1)." != 0";
                         $res = self::getUniqueValueFromDB( $sql );
 
                         if ($res == 0) {
@@ -1353,7 +1522,7 @@ class phobycatcafe extends Table
         }
 
         if ($game_over) {
-            $this->gamestate->nextState("goToGameEnd");
+            $this->gamestate->nextState("goStatsCalculation");
         } else {
             $this->gamestate->nextState("goToCleanBoardForNextRound");
         }
@@ -1383,6 +1552,27 @@ class phobycatcafe extends Table
                 second_chosen_dice_num = NULL, second_chosen_dice_val = NULL, second_chosen_played_order = NULL, 
                 location_chosen = NULL";
         self::DbQuery( $sql );
+
+        $this->gamestate->nextState("");
+    }
+
+    function stStatsCalculation()
+    {
+        $sql = "SELECT DISTINCT player_id FROM drawing ORDER BY player_id ASC";
+        $players = self::getCollectionFromDb( $sql );
+
+        $result = array();
+        foreach ($players as $player_id => $player) {
+            self::setStat( $this->getCatHouseScoreTotal($player_id), "cat_house", $player_id );
+            self::setStat( $this->getBallOfYarnScore($player_id), "ball_of_yarn", $player_id );
+            self::setStat( $this->getButterflyToyScore($player_id), "butterfly_toy", $player_id );
+            self::setStat( $this->getFoodBowlScore($player_id), "food_bowl", $player_id );
+            self::setStat( $this->getCushionScore($player_id), "cushion", $player_id );
+            // self::setStat( $this->getMouseToyScore($player_id), "mouse_toy", $player_id );
+
+            self::setStat( $this->getColumnsScore($player_id), "columns", $player_id );
+            self::setStat( $this->getCatFootprintsScore($player_id), "cat_footprints", $player_id );
+        }
 
         $this->gamestate->nextState("");
     }

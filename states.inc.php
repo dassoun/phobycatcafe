@@ -165,13 +165,13 @@ $machinestates = array(
         "transitions" => array( "columnsScoresChecked" => 8, "nextRound" => 13 )
     ),
 
-    // New round or end game ?
+    // New round or end game => stats calculation ?
     13 => array(
         "name" => "nextRound",
         "description" => '',
         "type" => "game",
         "action" => "stNextRound",
-        "transitions" => array( "goToCleanBoardForNextRound" => 14, "goToGameEnd" => 99 )
+        "transitions" => array( "goToCleanBoardForNextRound" => 14, "goStatsCalculation" => 17 )
     ),
 
     14 => array(
@@ -190,6 +190,15 @@ $machinestates = array(
         "args" => "argSetupNewRound",
         "action" => "stsetupNewRound",
         "transitions" => array( "" => 2 )
+    ),
+
+    17 => array(
+        "name" => "statsCalculation",
+        "description" => '',
+        "type" => "game",
+        // "args" => "argStatsCalculation",
+        "action" => "stStatsCalculation",
+        "transitions" => array( "" => 99 )
     ),
 
 /*

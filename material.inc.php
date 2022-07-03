@@ -74,7 +74,14 @@ $this->gameConstants = array(
 
   "COL_FLOORS_NUMBER" => array(4, 6, 5, 6, 3),
   "COL_SUB_SCORING_COL_MAX" => array(6, 9, 7, 8, 3),
-  "COL_SUB_SCORING_COL_MIN" => array(4, 5, 3, 4, 2)
+  "COL_SUB_SCORING_COL_MIN" => array(4, 5, 3, 4, 2),
+
+  "SHAPE_CAT_HOUSE" => 1,
+  "SHAPE_BUTTERFLY_TOY" => 2,
+  "SHAPE_BALL_OF_YARN" => 3,
+  "SHAPE_FOOD_BOWL" => 4,
+  "SHAPE_CUSHION" => 5,
+  "SHAPE_MOUSE_TOY" => 6
 );
 
 

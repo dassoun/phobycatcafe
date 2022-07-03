@@ -453,7 +453,7 @@ function (dojo, declare) {
 
                     if( this.isCurrentPlayerActive() ) {
                         for ( var id in args.args.score_cat ) {
-                            if ( args.args.score_cat[id] == null ) {
+                            if ( args.args.score_cat[id] == 0 ) {
                                 let elmt_id = 'cat_selection_' + player_id + '_'+ (parseInt(id) + 1);
                                 let elmt = $(elmt_id);
 
@@ -1139,7 +1139,7 @@ function (dojo, declare) {
 
             for ( var id in args.score_cat ) {
                 console.log( args.score_cat );
-                if ( args.score_cat[id] == null ) {
+                if ( args.score_cat[id] == 0 ) {
                     dojo.addClass( 'cat_selection_' + player_id + '_'+ (parseInt(id) + 1), 'ctc_cat_selectionnable');
                 }
             }

@@ -100,6 +100,14 @@ $stats_type = array(
         "mouse_toy" => array("id" => 70,
                     "name" => totranslate("Mouse toy"),
                     "type" => "int" ),
+
+        "columns" => array("id" => 80,
+                    "name" => totranslate("Columns"),
+                    "type" => "int" ),
+
+        "cat_footprints" => array("id" => 90,
+                    "name" => totranslate("Cat footprints"),
+                    "type" => "int" ),
 /*
         Examples:    
         
