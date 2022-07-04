@@ -362,28 +362,37 @@ class phobycatcafe extends Table
         $ball_of_yarn = array();
         $max = array(0, 0, 0, 0, 0);
 
-        foreach ($players as $key => $value) {
+        foreach ($players as $key => $player_info) {
 
-            $sql = "SELECT coord_x, coord_y, state FROM drawing WHERE player_id = '".$value["id"]."' ORDER BY coord_x, coord_y";
+            $sql = "SELECT coord_x, coord_y, state FROM drawing WHERE player_id = '".$player_info["id"]."' ORDER BY coord_x, coord_y";
             $player_grid = self::getDoubleKeyCollectionFromDB( $sql, true );
 
-            self::dump( "value[\"id\"] : ", $value["id"] );
+            self::dump( "value[\"id\"] : ", $player_info["id"] );
 
-            $ball_of_yarn[$value["id"]] = array(0, 0, 0, 0, 0);
+            $ball_of_yarn[$player_info["id"]] = array(0, 0, 0, 0, 0);
+
+            self::debug( "--------------------------------------------" );
+            self::dump( "player_grid : ", $player_grid );
 
             foreach($player_grid as $x => $value) {
                 $count = 0;
-                self::debug( "x = /" . $x . "/" );
+                
                 foreach($value as $y => $value2) {
                     if ($value2 == $this->gameConstants["SHAPE_BALL_OF_YARN"]) {
+
+                        self::debug( "x : ".$x.", y : ".$y." / value2 : ".$value2 );
+
                         $count++;
                     }
                 }
-                self::dump( "value[\"id\"] : ", $value["id"] );
-                self::debug( "x = /" . $x . "/" );
-                self::dump( "ball_of_yarn : ", $ball_of_yarn );
+                // self::debug( "--------------------------------------------" );
+                // self::dump( "player_grid : ", $player_grid );
+                // self::dump( "value : ", $player_info );
+                // self::dump( "value[\"id\"] : ", $player_info["id"] );
+                // self::debug( "x = /" . $x . "/" );
+                // self::dump( "ball_of_yarn : ", $ball_of_yarn );
                 
-                $ball_of_yarn[$value["id"]][$x] += $count;
+                $ball_of_yarn[$player_info["id"]][$x] += $count;
 
                 if ($count > $max[$x]) {
                     $max[$x] = $count;
@@ -431,12 +440,15 @@ class phobycatcafe extends Table
         return ($nb_butterfly_toy * 3);
     }
 
-    function getFoodBowlScore($player_id, $x, $y, $cat) {
+    function getFoodBowlScore($player_id) {
 
         $sql = "SELECT coord_x, coord_y, state FROM drawing WHERE player_id = '$player_id' ORDER BY coord_x, coord_y";
         $player_grid = self::getDoubleKeyCollectionFromDB( $sql, true );
 
         $food_bowl_score = 0;
+
+        self::debug( "+++++++++++++++++++++++++++++++ getFoodBowlScore" );
+        self::dump( "player_grid", $player_grid );
 
         foreach($player_grid as $x => $value) {
             foreach($value as $y => $value2) {
@@ -445,19 +457,29 @@ class phobycatcafe extends Table
 
                     $nb_shape = 0;
 
+                    // self::debug( "x : ".$x.", y: ".$y );
+
+                    // self::dump( "player_grid x", $player_grid[$x] );
+
+                    // if (array_key_exists(($y-1), $player_grid[$x])) {
+                    //     self::debug( "x : ".$x.", y: ".$y." exists !" );
+                    // } else {
+                    //     self::debug( "x : ".$x.", y: ".$y." does not exist !" );
+                    // }
+
                     // column x
-                    // if (array_key_exists($x, $player_grid)) {
-                        if (array_key_exists(($y-1), $player_grid[$x])) {
-                            $shape = $player_grid[$x][$y-1];
+                    if (array_key_exists(($y-1), $player_grid[$x])) {
+                        $shape = $player_grid[$x][$y-1];
+                        if ($shape > 0) {
                             $food_bowl_array[$shape - 1] = 1;
                         }
-                        if (array_key_exists(($y+1), $player_grid[$x])) {
-                            if ($player_grid[$x][$y+1] == $cat) {
-                                $shape = $player_grid[$x][$y+1];
-                                $food_bowl_array[$shape - 1] = 1;
-                            }
+                    }
+                    if (array_key_exists(($y+1), $player_grid[$x])) {
+                        $shape = $player_grid[$x][$y+1];
+                        if ($shape > 0) {
+                            $food_bowl_array[$shape - 1] = 1;
                         }
-                    // }
+                    }
 
                     if (($x % 2) == 0) {
                         // column x-1
@@ -465,7 +487,9 @@ class phobycatcafe extends Table
                             if (array_key_exists($x-1, $player_grid)) {
                                 if (array_key_exists(($y+$i), $player_grid[$x-1])) {
                                     $shape = $player_grid[$x-1][$y+$i];
-                                    $food_bowl_array[$shape - 1] = 1;
+                                    if ($shape > 0) {
+                                        $food_bowl_array[$shape - 1] = 1;
+                                    }
                                 }
                             }
                         }
@@ -474,7 +498,9 @@ class phobycatcafe extends Table
                             if (array_key_exists($x+1, $player_grid)) {
                                 if (array_key_exists(($y+$i), $player_grid[$x+1])) {
                                     $shape = $player_grid[$x+1][$y+$i];
-                                    $food_bowl_array[$shape - 1] = 1;
+                                    if ($shape > 0) {
+                                        $food_bowl_array[$shape - 1] = 1;
+                                    }
                                 }
                             }
                         }
@@ -484,7 +510,10 @@ class phobycatcafe extends Table
                             if (array_key_exists($x-1, $player_grid)) {
                                 if (array_key_exists(($y+$i), $player_grid[$x-1])) {
                                     $shape = $player_grid[$x-1][$y+$i];
-                                    $food_bowl_array[$shape - 1] = 1;
+                                    if ($shape > 0) {
+                                        $food_bowl_array[$shape - 1] = 1;
+                                    }
+                                    
                                 }
                             }
                         }
@@ -493,7 +522,9 @@ class phobycatcafe extends Table
                             if (array_key_exists($x+1, $player_grid)) {
                                 if (array_key_exists(($y+$i), $player_grid[$x+1])) {
                                     $shape = $player_grid[$x+1][$y+$i];
-                                    $food_bowl_array[$shape - 1] = 1;
+                                    if ($shape > 0) {
+                                        $food_bowl_array[$shape - 1] = 1;
+                                    }
                                 }
                             }
                         }
@@ -502,9 +533,13 @@ class phobycatcafe extends Table
                     foreach($food_bowl_array as $value) {
                         $food_bowl_score += $value;
                     }
+
+                    // self::dump( "food_bowl_array", $food_bowl_array );
                 }
             }
         }
+
+        // self::dump( "food_bowl_score", $food_bowl_score );
 
         // $food_bowl_array = array(0, 0, 0, 0, 0, 0);
 
@@ -570,7 +605,7 @@ class phobycatcafe extends Table
         //     $food_bowl_score += $value;
         // }
 
-        return ($food_bowl_score);
+        return $food_bowl_score;
     }
 
     function getCushionScore($player_id) {
@@ -988,7 +1023,7 @@ class phobycatcafe extends Table
         // If Butterfly, immediately gain 2 footprints
         $gained_footprints = 0;
         if ($shape == 3) {
-            $sql = "UPDATE player SET footprint_available = LEAST(footprint_available + 2, 18) WHERE player_id = '$player_id'";
+            $sql = "UPDATE player SET footprint_available = LEAST(footprint_available + 3, 18) WHERE player_id = '$player_id'";
             self::DbQuery($sql);
 
             $gained_footprints = 2;
@@ -1563,15 +1598,31 @@ class phobycatcafe extends Table
 
         $result = array();
         foreach ($players as $player_id => $player) {
-            self::setStat( $this->getCatHouseScoreTotal($player_id), "cat_house", $player_id );
-            self::setStat( $this->getBallOfYarnScore($player_id), "ball_of_yarn", $player_id );
-            self::setStat( $this->getButterflyToyScore($player_id), "butterfly_toy", $player_id );
-            self::setStat( $this->getFoodBowlScore($player_id), "food_bowl", $player_id );
-            self::setStat( $this->getCushionScore($player_id), "cushion", $player_id );
-            // self::setStat( $this->getMouseToyScore($player_id), "mouse_toy", $player_id );
+            $catHouseScore = $this->getCatHouseScoreTotal($player_id);
+            $ballOfYarnScore = $this->getBallOfYarnScore($player_id);
+            $butterflyToyScore = $this->getButterflyToyScore($player_id);
+            $foodBowlScore = $this->getFoodBowlScore($player_id);
+            $cushionScore = $this->getCushionScore($player_id);
+            $mouseToyScore = 0;
+            // $mouseToyScore = $this->getMouseToyScore($player_id);
 
-            self::setStat( $this->getColumnsScore($player_id), "columns", $player_id );
-            self::setStat( $this->getCatFootprintsScore($player_id), "cat_footprints", $player_id );
+            $columnsScore = $this->getColumnsScore($player_id);
+            $catFootprintsScore = $this->getCatFootprintsScore($player_id);
+
+
+            self::setStat( $catHouseScore, "cat_house", $player_id );
+            self::setStat( $ballOfYarnScore, "ball_of_yarn", $player_id );
+            self::setStat( $butterflyToyScore, "butterfly_toy", $player_id );
+            self::setStat( $foodBowlScore, "food_bowl", $player_id );
+            self::setStat( $cushionScore, "cushion", $player_id );
+            self::setStat( $mouseToyScore, "mouse_toy", $player_id );
+
+            self::setStat( $columnsScore, "columns", $player_id );
+            self::setStat( $catFootprintsScore, "cat_footprints", $player_id );
+
+            $totalScore = $catHouseScore + $ballOfYarnScore + $butterflyToyScore + $foodBowlScore + $cushionScore + $mouseToyScore + $columnsScore + $catFootprintsScore;
+
+            $this->DbQuery("UPDATE player SET player_score='$totalScore' WHERE player_id='$player_id'");
         }
 
         $this->gamestate->nextState("");
