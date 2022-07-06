@@ -1057,7 +1057,7 @@ class phobycatcafe extends Table
         //     }
         // }
 
-        if ($shape == 1) {
+        if ($shape == $this->gameConstants["SHAPE_CAT_HOUSE"]) {
             $this->gamestate->nextState( "chooseCat" );
         } else {
             $this->gamestate->nextState( "shapeChosen" );
