@@ -1022,11 +1022,11 @@ class phobycatcafe extends Table
 
         // If Butterfly, immediately gain 3 footprints
         $gained_footprints = 0;
-        if ($shape == 3) {
-            $sql = "UPDATE player SET footprint_available = LEAST(footprint_available + 3, 18) WHERE player_id = '$player_id'";
+        if ($shape == $this->gameConstants["SHAPE_BUTTERFLY_TOY"]) {
+            $sql = "UPDATE player SET footprint_available = LEAST(footprint_available + 2, 18) WHERE player_id = '$player_id'";
             self::DbQuery($sql);
 
-            $gained_footprints = 3;
+            $gained_footprints = 2;
         }
 
         $sql = "UPDATE drawing SET state = '$shape' WHERE player_id = '$player_id' AND coord_x = '$x' AND coord_y = '$y'";
