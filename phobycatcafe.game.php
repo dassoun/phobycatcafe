@@ -628,9 +628,20 @@ class phobycatcafe extends Table
         self::dump( "cushion_score", $cushion_score );
         return ($cushion_score);
     }
-
+    ///////////////////////////
+    // JPB !!!!!!!!!!!!!!!!! //
+    ///////////////////////////
     function getMouseToyScore($player_id) {
+        
+        $sql = "SELECT coord_x, coord_y, state FROM drawing WHERE player_id = '$player_id' ORDER BY coord_x, coord_y";
+        $player_grid = self::getDoubleKeyCollectionFromDB( $sql, true );
 
+        self::dump( "grille", $player_grid );
+
+        // state == $this->gameConstants["SHAPE_MOUSE_TOY"];
+        // $this->gameConstants["SHAPE_MOUSE_TOY"]
+
+        return 0;
     }
 
     function getColumnsScore($player_id) {
