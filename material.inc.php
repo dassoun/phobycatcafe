@@ -81,7 +81,9 @@ $this->gameConstants = array(
   "SHAPE_BUTTERFLY_TOY" => 3,
   "SHAPE_FOOD_BOWL" => 4,
   "SHAPE_CUSHION" => 5,
-  "SHAPE_MOUSE_TOY" => 6
+  "SHAPE_MOUSE_TOY" => 6,
+
+  "CONNECTED_MICE_POINTS" => array(2, 6, 12, 20)
 );
 
 
