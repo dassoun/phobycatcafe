@@ -641,7 +641,101 @@ class phobycatcafe extends Table
         // state == $this->gameConstants["SHAPE_MOUSE_TOY"];
         // $this->gameConstants["SHAPE_MOUSE_TOY"]
 
-        return 0;
+        $mice_score_calculation_tmp = array();
+        for ($i=0; $i<5; $i++) {
+            for ($j=0; $j<6; $j++) {
+                $mice_score_calculation_tmp[$i][$j] = "to_be_done";
+            }
+        }
+
+        self::dump( "grille json : ", json_encode($mice_score_calculation_tmp));
+
+        $connected_mice_score = array();
+
+        for ($x=0; $x<5; $x++) {
+            for ($y=0; $y<6; $y++) {
+                if (array_key_exists(($y), $player_grid[$x])) {
+                    if ($player_grid[$x][$y] == $this->gameConstants["SHAPE_MOUSE_TOY"]) {
+                        $connected_mice = 0;
+                        $connected_mice = $this->getConnectedMice($grid, $x, $y, $mice_score_calculation_tmp);
+                        $connected_mice_score[] = $connected_mice;
+                    } else {
+                        $mice_score_calculation_tmp[$x][$y] = "done";
+                    }
+                } else {
+                    self::dump( "key not exists : x = $x, y = $y", "+++++++++++++++++++++++++++");
+                }
+            }
+        }
+
+        self::dump( "mice tmp : ", json_encode($mice_score_calculation_tmp));
+
+        self::dump( "mice score : ", json_encode($connected_mice_score));
+    }
+
+    function getConnectedMice(&$grid, $x, $y, &$mice_score_calculation_tmp) {
+
+        self::dump( "getConnectedMice : x = $x, y = $y", "***");
+
+        if (is_null($grid) || !array_key_exists($x, $grid) || !array_key_exists($y, $grid[$x])) {
+            return 0;
+        }
+
+        if ($mice_score_calculation_tmp[$x][$y] == "done") {
+            return 0;
+        } else {
+            $mice_score_calculation_tmp[$x][$y] = "done";
+        }
+
+        if ($grid[$x][$y] != $this->gameConstants["SHAPE_MOUSE_TOY"]) {
+            $score = 1;
+
+            // column x
+            if (array_key_exists(($y-1), $grid[$x])) {
+                $score += getConnectedMice($grid, $x, $y-1);
+            }
+            if (array_key_exists(($y+1), $grid[$x])) {
+                $score += getConnectedMice($grid, $x, $y+1);
+            }
+
+            if (($x % 2) == 0) {
+                // column x-1
+                for ($i=0; $i<2; $i++) {
+                    if (array_key_exists($x-1, $player_grid)) {
+                        if (array_key_exists(($y+$i), $player_grid[$x-1])) {
+                            $score += getConnectedMice($grid, $x-1, $y+$i);
+                        }
+                    }
+                }
+                // column x+1
+                for ($i=0; $i<2; $i++) {
+                    if (array_key_exists($x+1, $player_grid)) {
+                        if (array_key_exists(($y+$i), $player_grid[$x+1])) {
+                            $score += getConnectedMice($grid, $x+1, $y+$i);
+                        }
+                    }
+                }
+            } else {
+                // column x-1
+                for ($i=-1; $i<1; $i++) {
+                    if (array_key_exists($x-1, $player_grid)) {
+                        if (array_key_exists(($y+$i), $player_grid[$x-1])) {
+                            $score += getConnectedMice($grid, $x-1, $y+$i);
+                        }
+                    }
+                }
+                // column x+1
+                for ($i=-1; $i<1; $i++) {
+                    if (array_key_exists($x+1, $player_grid)) {
+                        if (array_key_exists(($y+$i), $player_grid[$x+1])) {
+                            $score += getConnectedMice($grid, $x+1, $y+$i);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $score;
     }
 
     function getColumnsScore($player_id) {
