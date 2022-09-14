@@ -657,8 +657,11 @@ class phobycatcafe extends Table
                 if (array_key_exists(($y), $player_grid[$x])) {
                     if ($player_grid[$x][$y] == $this->gameConstants["SHAPE_MOUSE_TOY"]) {
                         $connected_mice = 0;
-                        $connected_mice = $this->getConnectedMice($grid, $x, $y, $mice_score_calculation_tmp);
-                        $connected_mice_score[] = $connected_mice;
+                        $connected_mice = $this->getConnectedMice($player_grid, $x, $y, $mice_score_calculation_tmp);
+                        self::dump( "connected mice score : ", json_encode($connected_mice));
+                        if ($connected_mice > 0) {
+                            $connected_mice_score[] = $connected_mice;
+                        }
                     } else {
                         $mice_score_calculation_tmp[$x][$y] = "done";
                     }
@@ -671,66 +674,74 @@ class phobycatcafe extends Table
         self::dump( "mice tmp : ", json_encode($mice_score_calculation_tmp));
 
         self::dump( "mice score : ", json_encode($connected_mice_score));
+
+
+        $mice_score = 0;
+
+        foreach($connected_mice_score as $nb_mice) {
+            self::dump( "nb_mice : $nb_mice", "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+            $mod_chain_of_4 = floor($nb_mice / 4);
+            self::dump( "mod_chain_of_4 : $mod_chain_of_4", "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+            $rest = $nb_mice % 4;
+            self::dump( "rest : $rest", "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+            
+            $mice_score += $this->gameConstants["CONNECTED_MICE_POINTS"][3] * $mod_chain_of_4;
+            if ($rest > 0) {
+                $mice_score += $this->gameConstants["CONNECTED_MICE_POINTS"][$rest - 1];
+            }
+
+            self::dump( "tmp mice score $nb_mice : $mice_score", "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+        }
+
+        self::dump( "final mice score : ", json_encode($mice_score));
+        return $mice_score;
     }
 
     function getConnectedMice(&$grid, $x, $y, &$mice_score_calculation_tmp) {
 
+        $score = 0;
         self::dump( "getConnectedMice : x = $x, y = $y", "***");
 
-        if (is_null($grid) || !array_key_exists($x, $grid) || !array_key_exists($y, $grid[$x])) {
+        // if (is_null($grid) || !isset($grid[$x]) || !isset($grid[$x][$y])) {
+        if (!isset($grid[$x][$y])) {
+            // self::dump( "grille : ", array_key_exists($x, $grid));
+            self::dump( "A", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! $score");
             return 0;
         }
 
         if ($mice_score_calculation_tmp[$x][$y] == "done") {
+            self::dump( "B", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! $score");
             return 0;
         } else {
+            self::dump( "C", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! $score");
             $mice_score_calculation_tmp[$x][$y] = "done";
         }
 
-        if ($grid[$x][$y] != $this->gameConstants["SHAPE_MOUSE_TOY"]) {
+        if ($grid[$x][$y] == $this->gameConstants["SHAPE_MOUSE_TOY"]) {
+            self::dump( "D", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! $score");
             $score = 1;
 
             // column x
-            if (array_key_exists(($y-1), $grid[$x])) {
-                $score += getConnectedMice($grid, $x, $y-1);
-            }
-            if (array_key_exists(($y+1), $grid[$x])) {
-                $score += getConnectedMice($grid, $x, $y+1);
-            }
+            $score += $this->getConnectedMice($grid, $x, $y-1, $mice_score_calculation_tmp);
+            $score += $this->getConnectedMice($grid, $x, $y+1, $mice_score_calculation_tmp);
 
             if (($x % 2) == 0) {
                 // column x-1
                 for ($i=0; $i<2; $i++) {
-                    if (array_key_exists($x-1, $player_grid)) {
-                        if (array_key_exists(($y+$i), $player_grid[$x-1])) {
-                            $score += getConnectedMice($grid, $x-1, $y+$i);
-                        }
-                    }
+                    $score += $this->getConnectedMice($grid, $x-1, $y+$i, $mice_score_calculation_tmp);
                 }
                 // column x+1
                 for ($i=0; $i<2; $i++) {
-                    if (array_key_exists($x+1, $player_grid)) {
-                        if (array_key_exists(($y+$i), $player_grid[$x+1])) {
-                            $score += getConnectedMice($grid, $x+1, $y+$i);
-                        }
-                    }
+                    $score += $this->getConnectedMice($grid, $x+1, $y+$i, $mice_score_calculation_tmp);
                 }
             } else {
                 // column x-1
                 for ($i=-1; $i<1; $i++) {
-                    if (array_key_exists($x-1, $player_grid)) {
-                        if (array_key_exists(($y+$i), $player_grid[$x-1])) {
-                            $score += getConnectedMice($grid, $x-1, $y+$i);
-                        }
-                    }
+                    $score += $this->getConnectedMice($grid, $x-1, $y+$i, $mice_score_calculation_tmp);
                 }
                 // column x+1
                 for ($i=-1; $i<1; $i++) {
-                    if (array_key_exists($x+1, $player_grid)) {
-                        if (array_key_exists(($y+$i), $player_grid[$x+1])) {
-                            $score += getConnectedMice($grid, $x+1, $y+$i);
-                        }
-                    }
+                    $score += $this->getConnectedMice($grid, $x+1, $y+$i, $mice_score_calculation_tmp);
                 }
             }
         }
@@ -1708,8 +1719,7 @@ class phobycatcafe extends Table
             $butterflyToyScore = $this->getButterflyToyScore($player_id);
             $foodBowlScore = $this->getFoodBowlScore($player_id);
             $cushionScore = $this->getCushionScore($player_id);
-            $mouseToyScore = 0;
-            // $mouseToyScore = $this->getMouseToyScore($player_id);
+            $mouseToyScore = $this->getMouseToyScore($player_id);
 
             $columnsScore = $this->getColumnsScore($player_id);
             $catFootprintsScore = $this->getCatFootprintsScore($player_id);
