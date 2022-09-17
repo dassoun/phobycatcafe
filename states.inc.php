@@ -108,8 +108,8 @@ $machinestates = array(
     7 => array(
         // Choose a 1rst dice for location, or pass
         "name" => "playerTurnDrawingPhase1",
-        "description" => clienttranslate('${actplayer} must choose a dice, or pass.'),
-        "descriptionmyturn" => clienttranslate('${you} must choose a dice, or pass.'),
+        "description" => clienttranslate('${actplayer} must choose a dice for location, or pass.'),
+        "descriptionmyturn" => clienttranslate('${you} must choose a dice for location, or pass.'),
         "type" => "activeplayer",
         "args" => "argPlayerTurnDrawingPhase1",
         "possibleactions" => array( "pass", "chooseDiceForLocation" ),

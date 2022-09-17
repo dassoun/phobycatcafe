@@ -61,6 +61,11 @@ function (dojo, declare) {
                 var player = gamedatas.players[player_id];
                          
                 // TODO: Setting up players boards if needed
+                // Player boards
+                var player_board_div = $('player_board_'+player_id);
+                dojo.place( this.format_block('jstpl_player_side_board', { player_id:player_id } ), player_board_div );
+
+
                 dojo.place( this.format_block('jstpl_player_board', {
                     player:player_id,
 
@@ -182,6 +187,10 @@ function (dojo, declare) {
 
                     this.slideToObjectPos( $('cat_footprint_'+player_id+'_'+i), $('player_board_'+player_id), this.getXPixelCoordinatesFootprints(i), this.getYPixelCoordinatesFootprints(i), 10 ).play();
                 }
+
+                // Cat footprints on personnal board
+                dojo.byId("available_footprint_counter_" + player_id).innerHTML = available;
+                dojo.byId("used_footprint_counter_" + player_id).innerHTML = used;
 
                 // Cat selection
                 for ( let i=1; i<=6; i++ ) {
@@ -971,6 +980,16 @@ function (dojo, declare) {
             console.log( '$$$$ : End updateFootprintsState' );
         },
 
+        updateFootprintsCounters: function( player_id, used, available ) {
+            console.log( '$$$$ : updateFootprintsState' );
+
+            // Cat footprints on personnal board
+            dojo.byId("available_footprint_counter_" + player_id).innerHTML = available;
+            dojo.byId("used_footprint_counter_" + player_id).innerHTML = used;
+
+            console.log( '$$$$ : End updateFootprintsState' );
+        },
+
         setupDices: function( args ) {
             console.log( '$$$$ : setupDices' );
 
@@ -1235,6 +1254,46 @@ function (dojo, declare) {
             console.log('$$$$ : remove_temp_shape Ended');
          },
 
+         /* @Override */
+        // format_string_recursive : function format_string_recursive(log, args) {
+        //     try {
+        //         if (log && args && !args.processed) {
+        //             args.processed = true;
+                    
+
+        //             // list of special keys we want to replace with images
+        //             var keys = ['place_name','token_name'];
+                    
+                  
+        //             for ( var i in keys) {
+        //                 var key = keys[i];
+        //                 key in args && args[key] = this.getTokenDiv(key, args);                            
+
+        //             }
+        //         }
+        //     } catch (e) {
+        //         console.error(log,args,"Exception thrown", e.stack);
+        //     }
+        //     return this.inherited({callee: format_string_recursive}, arguments);
+        // },
+
+        /* @Override */
+        format_string_recursive: function(log, args) {
+            try {
+                if (log && args && !args.processed) {
+                    args.processed = true;
+                    if ('ctc_log_dice' in args) {
+                        args['ctc_log_dice'] = this.format_block('jstpl_game_log_dice', {
+                            dice_face:args['dice_face']
+                        });
+                    } 
+                }
+            } catch (e) {
+                console.error(log, args, "Exception", e.stack);
+            }
+            return this.inherited(arguments);
+        },
+
         // removeClassCatSelectionnable: function() {
         //     $player_id = this.getActivePlayerId();
 
@@ -1485,6 +1544,8 @@ function (dojo, declare) {
             console.log( '**** Notification : dicePicked' );
             console.log( notif );
 
+            console.log(notif.args);
+
             var slide = this.slideToObject( $( 'dice_' + notif.args.dice_id + "_" + notif.args.dice_face ), $( 'dice_player_' + notif.args.player_id + '_0' ), 1000 );
             dojo.connect( slide, 'onEnd', this, dojo.hitch( this, function() {
                         // At the end of the slide, update the intersection 
@@ -1541,6 +1602,7 @@ function (dojo, declare) {
             // }
 
             this.updateFootprintsState( notif.args.player_id, notif.args.footprint_used, notif.args.footprint_available );
+            this.updateFootprintsCounters( notif.args.player_id, notif.args.footprint_used, notif.args.footprint_available );
 
             console.log( '**** Notification : passed Ended' );
             // dojo.addClass( 'square_' + notif.args.player_id + '_' + notif.args.x +'_' + notif.args.y, 'ctc_square_' + notif.args.shape );
@@ -1611,6 +1673,7 @@ function (dojo, declare) {
             let y = notif.args.y;
 
             this.updateFootprintsState( notif.args.player_id, notif.args.footprint_used, notif.args.footprint_available );
+            this.updateFootprintsCounters( notif.args.player_id, notif.args.footprint_used, notif.args.footprint_available );
             
             // for (let i=0; i<5; i++) {
             //     for (let j=0; j<6; j++) {
@@ -1636,7 +1699,7 @@ function (dojo, declare) {
             let shape = notif.args.shape;
 
             this.updateFootprintsState( notif.args.player_id, notif.args.footprint_used, notif.args.footprint_available );
-
+            this.updateFootprintsCounters( notif.args.player_id, notif.args.footprint_used, notif.args.footprint_available );
 
             dojo.place( this.format_block( 'jstpl_square_tmp', {
                 value: shape,

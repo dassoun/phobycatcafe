@@ -808,11 +808,13 @@ class phobycatcafe extends Table
         self::DbQuery($sql);
 
         // Notify all players
-        self::notifyAllPlayers( "dicePicked", clienttranslate( '${player_name} picked a dice' ), array(
+        self::notifyAllPlayers( "dicePicked", clienttranslate( '${player_name} picked a dice ${ctc_log_dice}' ), array(
             'player_id' => $player_id,
             'player_name' => self::getActivePlayerName(),
             'dice_id' => $dice_id,
             'dice_face' => $dice_face,
+            'ctc_log_dice' => $dice_face,
+            'preserve' => [ 'ctc_log_dice' ]
             // 'coord_x' => $coord_x,
             // 'coord_y' => $coord_y,
             // 'color' => $color,
@@ -862,7 +864,7 @@ class phobycatcafe extends Table
         $player_id = self::getActivePlayerId();
 
         // Update available footprints
-        $sql = "UPDATE player SET has_passed = true, footprint_available = LEAST(footprint_available + 3, 18) WHERE player_id = '$player_id'";
+        $sql = "UPDATE player SET has_passed = true, footprint_available = LEAST(footprint_available + ".$this->gameConstants["FOOTPRINTS_GAINED_PASSING"].", (".$this->gameConstants["FOOTPRINTS_TOTAL"]." - footprint_used)) WHERE player_id = '$player_id'";
         self::DbQuery($sql);
 
         $sql = "SELECT footprint_available, footprint_used FROM player WHERE player_id = '$player_id'";
@@ -1081,7 +1083,7 @@ class phobycatcafe extends Table
 
 
         // Notify all players
-        self::notifyAllPlayers( "drawingLocationChosen", clienttranslate( '${player_name} has chosen his first dice' ), array(
+        self::notifyAllPlayers( "drawingLocationChosen", clienttranslate( '${player_name} has chosen where to draw' ), array(
             'player_id' => $player_id,
             'player_name' => self::getActivePlayerName(),
             'x' => $x,
@@ -1125,6 +1127,7 @@ class phobycatcafe extends Table
             self::DbQuery($sql);
         }
 
+        // Can the player choose this shape ?
         $required_footprint = abs($remaing_dice_value - $shape);
         if ($required_footprint > $player_info['footprint_available']) {
             throw new BgaUserException( self::_(clienttranslate("You can't draw this.")) );
@@ -1139,10 +1142,14 @@ class phobycatcafe extends Table
         // If Butterfly, immediately gain 3 footprints
         $gained_footprints = 0;
         if ($shape == $this->gameConstants["SHAPE_BUTTERFLY_TOY"]) {
-            $sql = "UPDATE player SET footprint_available = LEAST(footprint_available + 2, 18) WHERE player_id = '$player_id'";
-            self::DbQuery($sql);
+            $sql = "SELECT ".$this->gameConstants["FOOTPRINTS_TOTAL"]." - (footprint_available + footprint_used) FROM player WHERE player_id = '$player_id'";
+            $free_footprints = self::getUniqueValueFromDB( $sql );
 
-            $gained_footprints = 2;
+            $gained_footprints = min($this->gameConstants["FOOTPRINTS_GAINED_BUTTERFLY"], $free_footprints);
+
+            // $sql = "UPDATE player SET footprint_available = LEAST(footprint_available + 2, (18 - footprint_used)) WHERE player_id = '$player_id'";
+            $sql = "UPDATE player SET footprint_available = footprint_available + $gained_footprints WHERE player_id = '$player_id'";
+            self::DbQuery($sql);
         }
 
         $sql = "UPDATE drawing SET state = '$shape' WHERE player_id = '$player_id' AND coord_x = '$x' AND coord_y = '$y'";
@@ -1498,6 +1505,7 @@ class phobycatcafe extends Table
         $values = array();
         for ($i=0; $i<=self::getPlayersNumber(); $i++) {
             $values[] = "(".($i + 1).", ".bga_rand(1, 6).")";
+            // $values[] = "(".($i + 1).", 3)";
         }
 
         $sql = "INSERT INTO dice (id, dice_value) VALUES ";

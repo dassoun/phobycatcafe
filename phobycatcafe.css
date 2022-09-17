@@ -231,16 +231,41 @@
 }
 
 /* Player side board */
-.ctc_psb_footprint_available {
+.ctc_psb_footprint {
     width: 15px;
 	height: 14px;
 	display: inline-block;
     position: relative;
     background-repeat: no-repeat;
-    background-image: url( 'img/footprint.png');
     margin-top: 4px;
     margin-right: 3px;
 }
+
+.ctc_psb_footprint_available {
+    background-image: url( 'img/footprint.png');
+}
+
+.ctc_psb_footprint_used {
+    background-image: url( 'img/used_footprint.png');
+}
+
+.ctc_psb_board {
+	clear: both;
+}
+
+.ctc_log_dice {
+    display:inline-block;
+    height: 30px;
+    width: 30px;
+    background-image: url( 'img/30_30_colored_dice.png' );
+}
+
+.ctc_log_dice_1 { background-position: 0px 0px; }
+.ctc_log_dice_2 { background-position: -30px 0px; }
+.ctc_log_dice_3 { background-position: -60px 0px; }
+.ctc_log_dice_4 { background-position: -90px 0px; }
+.ctc_log_dice_5 { background-position: -120px 0px; }
+.ctc_log_dice_6 { background-position: -150px 0px; }
 
 /*
     Example of CSS sprites (a black token and a white token, 20x20px each, embedded in the same "tokens.png" 40x20px image):

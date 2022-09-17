@@ -25,9 +25,6 @@
     Please REMOVE this comment before publishing your game on BGA
 -->
 
-
-This is your game interface. You can edit this HTML in your ".tpl" file.
-
 <div id="ctc_game_area">
 
     <!-- BEGIN player -->
@@ -74,6 +71,13 @@ var jstpl_cat_footprint='<div class="ctc_cat_footprint ctc_cat_footprint_${state
 var jstpl_cat_selection='<div class="ctc_cat_selection" id="cat_selection_${player_id}_${id}"></div>';
 
 var jstpl_sub_scoring='<div class="ctc_sub_scoring" id="sub_scoring_${player_id}_${id}"></div>';
+
+var jstpl_player_side_board = '<div class="ctc_psb_board">\
+    <div id="available_footprint_${player_id}" class="ctc_psb_footprint ctc_psb_footprint_available"></div><span id="available_footprint_counter_${player_id}">0</span>\
+    <div id="used_footprint_${player_id}" class="ctc_psb_footprint ctc_psb_footprint_used"></div><span id="used_footprint_counter_${player_id}">0</span>\
+</div>';
+
+var jstpl_game_log_dice = '<div class="ctc_log_dice ctc_log_dice_${dice_face}"></div>';
 
 </script>  
 

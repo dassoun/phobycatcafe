@@ -83,7 +83,11 @@ $this->gameConstants = array(
   "SHAPE_CUSHION" => 5,
   "SHAPE_MOUSE_TOY" => 6,
 
-  "CONNECTED_MICE_POINTS" => array(2, 6, 12, 20)
+  "CONNECTED_MICE_POINTS" => array(2, 6, 12, 20),
+
+  "FOOTPRINTS_TOTAL" => 18,
+  "FOOTPRINTS_GAINED_PASSING" => 3,
+  "FOOTPRINTS_GAINED_BUTTERFLY" => 2
 );
 
 
