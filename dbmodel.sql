@@ -37,6 +37,7 @@ ALTER TABLE `player` ADD `is_first_player` boolean NOT NULL DEFAULT false;
 ALTER TABLE `player` ADD `has_passed` boolean NOT NULL DEFAULT false;
 ALTER TABLE `player` ADD `footprint_available` tinyint(2) UNSIGNED NOT NULL DEFAULT '1';
 ALTER TABLE `player` ADD `footprint_used` tinyint(2) UNSIGNED NOT NULL DEFAULT '0';
+ALTER TABLE `player` ADD `footprint_required_tmp` tinyint(2) UNSIGNED NOT NULL DEFAULT '0';
 ALTER TABLE `player` ADD `first_chosen_dice_num` tinyint(2) UNSIGNED DEFAULT NULL;
 ALTER TABLE `player` ADD `first_chosen_dice_val` tinyint(2) UNSIGNED DEFAULT NULL;
 ALTER TABLE `player` ADD `first_chosen_played_order` tinyint(2) UNSIGNED DEFAULT NULL;

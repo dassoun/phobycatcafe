@@ -813,8 +813,7 @@ class phobycatcafe extends Table
             'player_name' => self::getActivePlayerName(),
             'dice_id' => $dice_id,
             'dice_face' => $dice_face,
-            'ctc_log_dice' => $dice_face,
-            'preserve' => [ 'ctc_log_dice' ]
+            'ctc_log_dice' => $dice_face
             // 'coord_x' => $coord_x,
             // 'coord_y' => $coord_y,
             // 'color' => $color,
@@ -989,15 +988,29 @@ class phobycatcafe extends Table
         $sql = "UPDATE drawing SET state = 0 WHERE player_id = '$player_id' AND coord_x = '$locations[0]' AND coord_y = '$locations[1]'";
         self::DbQuery($sql);
 
-        $sql = "UPDATE player SET first_chosen_played_order = null, second_chosen_played_order = null, location_chosen = null WHERE player_id = '$player_id'";
+        $sql = "UPDATE player SET 
+                    first_chosen_played_order = null, 
+                    second_chosen_played_order = null, 
+                    location_chosen = null, 
+                    footprint_available = footprint_available + footprint_required_tmp,
+                    footprint_used = footprint_used - footprint_required_tmp,
+                    footprint_required_tmp = 0 
+                WHERE player_id = '$player_id'";
         self::DbQuery($sql);
+
+        $sql = "SELECT footprint_available, footprint_used FROM player WHERE player_id = '$player_id'";
+        $res = self::getObjectFromDB($sql);
+        $footprint_available = $res['footprint_available'];
+        $footprint_used = $res['footprint_used'];
 
         // Notify all players
         self::notifyAllPlayers( "backToTurnDrawingPhase1", clienttranslate( '${player_name} has cancelled his action' ), array(
             'player_id' => $player_id,
             'player_name' => self::getActivePlayerName(),
             'x' => $locations[0],
-            'y' => $locations[1]
+            'y' => $locations[1],
+            'footprint_available' => $footprint_available,
+            'footprint_used' => $footprint_used
             // 'first_chosen_dice_num' => $num_player_dice,
             // 'first_chosen_dice_val' => $player_dice_face,
             )
@@ -1020,15 +1033,29 @@ class phobycatcafe extends Table
         $sql = "UPDATE drawing SET state = 0 WHERE player_id = '$player_id' AND coord_x = '$locations[0]' AND coord_y = '$locations[1]'";
         self::DbQuery($sql);
 
-        $sql = "UPDATE player SET first_chosen_played_order = null, second_chosen_played_order = null, location_chosen = null WHERE player_id = '$player_id'";
+        $sql = "UPDATE player SET 
+                    first_chosen_played_order = null, 
+                    second_chosen_played_order = null, 
+                    location_chosen = null, 
+                    footprint_available = footprint_available + footprint_required_tmp,
+                    footprint_used = footprint_used - footprint_required_tmp,
+                    footprint_required_tmp = 0 
+                WHERE player_id = '$player_id'";
         self::DbQuery($sql);
+
+        $sql = "SELECT footprint_available, footprint_used FROM player WHERE player_id = '$player_id'";
+        $res = self::getObjectFromDB($sql);
+        $footprint_available = $res['footprint_available'];
+        $footprint_used = $res['footprint_used'];
 
         // Notify all players
         self::notifyAllPlayers( "backToTurnDrawingPhase1", clienttranslate( '${player_name} has cancelled his action' ), array(
             'player_id' => $player_id,
             'player_name' => self::getActivePlayerName(),
             'x' => $locations[0],
-            'y' => $locations[1]
+            'y' => $locations[1],
+            'footprint_available' => $footprint_available,
+            'footprint_used' => $footprint_used
             // 'first_chosen_dice_num' => $num_player_dice,
             // 'first_chosen_dice_val' => $player_dice_face,
             )
@@ -1077,7 +1104,8 @@ class phobycatcafe extends Table
         $sql = "UPDATE player SET 
                     location_chosen = CONCAT('$x', ',', '$y'),
                     footprint_available = (footprint_available - $nb_required_footprint), 
-                    footprint_used = (footprint_used + $nb_required_footprint) 
+                    footprint_used = (footprint_used + $nb_required_footprint),
+                    footprint_required_tmp = $nb_required_footprint
                 WHERE player_id = '$player_id'";
         self::DbQuery($sql);
 
@@ -1134,7 +1162,7 @@ class phobycatcafe extends Table
         } else {
             if ($required_footprint > 0) {
                 // Update available footprints
-                $sql = "UPDATE player SET footprint_available = (footprint_available - $required_footprint), footprint_used = (footprint_used + $required_footprint) WHERE player_id = '$player_id'";
+                $sql = "UPDATE player SET footprint_available = (footprint_available - $required_footprint), footprint_used = (footprint_used + $required_footprint), footprint_required_tmp = (footprint_required_tmp + $required_footprint) WHERE player_id = '$player_id'";
                 self::DbQuery($sql);
             }
         }
@@ -1709,7 +1737,7 @@ class phobycatcafe extends Table
                 has_passed = false,
                 first_chosen_dice_num = NULL, first_chosen_dice_val = NULL, first_chosen_played_order = NULL, 
                 second_chosen_dice_num = NULL, second_chosen_dice_val = NULL, second_chosen_played_order = NULL, 
-                location_chosen = NULL";
+                location_chosen = NULL, footprint_required_tmp = 0";
         self::DbQuery( $sql );
 
         $this->gamestate->nextState("");

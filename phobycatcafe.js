@@ -1284,7 +1284,7 @@ function (dojo, declare) {
                     args.processed = true;
                     if ('ctc_log_dice' in args) {
                         args['ctc_log_dice'] = this.format_block('jstpl_game_log_dice', {
-                            dice_face:args['dice_face']
+                            dice_face:args['ctc_log_dice']
                         });
                     } 
                 }
@@ -1823,6 +1823,9 @@ function (dojo, declare) {
                 let cat_elmt_id = 'cat_selection_'+player_id+'_'+i;
                 dojo.removeClass(cat_elmt_id, 'ctc_cat_selectionnable');
             }
+
+            this.updateFootprintsState( notif.args.player_id, notif.args.footprint_used, notif.args.footprint_available );
+            this.updateFootprintsCounters( notif.args.player_id, notif.args.footprint_used, notif.args.footprint_available );
 
             console.log( '**** Notification : backToTurnDrawingPhase1 Ended' );
         },
