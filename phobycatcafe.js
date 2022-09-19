@@ -211,6 +211,13 @@ function (dojo, declare) {
 
                     this.slideToObjectPos( $('sub_scoring_'+player_id+'_'+i), $('player_board_'+player_id), this.getXPixelCoordinatesSubScoring(i - 1), this.getYPixelCoordinatesSubScoring(i), 10 ).play();
                 }
+
+                // selected location for drawing
+                var location_chosen = gamedatas.players[player_id]["location_chosen"];
+                if (location_chosen != null) {
+                    var coords = location_chosen.split(",");
+                    dojo.addClass( "square_"+player_id+"_"+coords[0]+"_"+coords[1], "ctc_square_selected" );
+                }
             }
             
             // TODO: Set up your game interface here, according to "gamedatas"
@@ -260,6 +267,18 @@ function (dojo, declare) {
                     dojo.addClass( 'dice_player_' + player_id + '_1', 'ctc_dice_' + remaining_dice_val );
                 }
             }
+
+            for( var player_id in gamedatas.players ) {
+                if (gamedatas.players[player_id]["first_chosen_played_order"] == 1) {
+                    dojo.addClass($('dice_player_'+player_id+'_0'), 'ctc_dice_selected');
+                } else {
+                    if (gamedatas.players[player_id]["second_chosen_played_order"] == 1) {
+                        dojo.addClass($('dice_player_'+player_id+'_1'), 'ctc_dice_selected');
+                    }
+                }
+            }
+            
+            
 
             // let nb_total_dice = 0;
             // let nb_selected_dice = 0;
@@ -1108,8 +1127,10 @@ function (dojo, declare) {
             console.log( args['player_id'] );
             console.log( "++++" );
 
-            var obj = { color:"#f00" };
-            dojo.setAttr('dice_player_'+args['player_id']+'_'+args['first_chosen_dice_num'], "style", obj);
+            // var obj = { color:"#f00" };
+            // dojo.setAttr('dice_player_'+args['player_id']+'_'+args['first_chosen_dice_num'], "style", obj);
+
+            dojo.addClass($('dice_player_'+args['player_id']+'_'+args['first_chosen_dice_num']), 'ctc_dice_selected');
 
             console.log( '$$$$ : End updatePlayerDiceChosen' );
         },
@@ -1191,6 +1212,12 @@ function (dojo, declare) {
                         dojo.setAttr('dice_player_'+args.players[id2].id+'_1', "style", obj);
                     }
                 }
+            }
+
+            // Remove dice selected for location class
+            for( var id in args.players ) {
+                dojo.removeClass('dice_player_' + args.players[id].id + '_0', 'ctc_dice_selected');
+                dojo.removeClass('dice_player_' + args.players[id].id + '_1', 'ctc_dice_selected');
             }
 
             console.log( '$$$$ : cleanBoardForNextRound Ended' );
@@ -1519,8 +1546,8 @@ function (dojo, declare) {
             dojo.subscribe( 'catChosen', this, "notif_catChosen" );
             dojo.subscribe( 'columnSubScoringMax', this, "notif_columnSubScoringMax" );
             dojo.subscribe( 'columnSubScoringMin', this, "notif_columnSubScoringMin" );
-            dojo.subscribe('score', this, "notif_score");
-            dojo.subscribe('backToTurnDrawingPhase1', this, "notif_backToTurnDrawingPhase1");
+            dojo.subscribe( 'score', this, "notif_score" );
+            dojo.subscribe( 'backToTurnDrawingPhase1', this, "notif_backToTurnDrawingPhase1" );
         },  
         
         // TODO: from this point and below, you can write your game notifications handling methods
@@ -1823,6 +1850,10 @@ function (dojo, declare) {
                 let cat_elmt_id = 'cat_selection_'+player_id+'_'+i;
                 dojo.removeClass(cat_elmt_id, 'ctc_cat_selectionnable');
             }
+
+            // Remove dice selected for location class
+            dojo.removeClass('dice_player_' + notif.args.player_id + '_0', 'ctc_dice_selected');
+            dojo.removeClass('dice_player_' + notif.args.player_id + '_1', 'ctc_dice_selected');
 
             this.updateFootprintsState( notif.args.player_id, notif.args.footprint_used, notif.args.footprint_available );
             this.updateFootprintsCounters( notif.args.player_id, notif.args.footprint_used, notif.args.footprint_available );

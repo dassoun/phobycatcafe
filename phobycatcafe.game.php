@@ -1672,7 +1672,11 @@ class phobycatcafe extends Table
     function stNextPlayerDrawing()
     {
     	self::trace( "stNextPlayerDrawing" );
-    	 
+    	
+        $active_player_id = self::getActivePlayerId();
+        $sql = "UPDATE player SET location_chosen = null WHERE player_id = '$active_player_id'";
+        self::DbQuery($sql);
+
     	// Go to next player
     	$active_player = self::activeNextPlayer();
     	self::giveExtraTime( $active_player );    
