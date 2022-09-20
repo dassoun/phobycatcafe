@@ -1604,27 +1604,53 @@ class phobycatcafe extends Table
 
                     self::trace( "---- nb = $res / ".$this->gameConstants["COL_FLOORS_NUMBER"][$i]." ----" );
 
+                    // column complete ?
                     if ($res == $this->gameConstants["COL_FLOORS_NUMBER"][$i]) {
                         $sql = "SELECT COUNT(*) FROM player WHERE score_col_".($i+1)." != 0";
                         $res = self::getUniqueValueFromDB( $sql );
 
+                        // first to complete the column ?
                         if ($res == 0) {
-                            $sql = "UPDATE player SET score_col_".($i+1)." = ".$this->gameConstants["COL_SUB_SCORING_COL_MAX"][$i]." WHERE player_id = '$active_player_id'";
+                            $sql = "SELECT COUNT(state) FROM drawing WHERE player_id = $active_player_id AND coord_x = $i AND state = 1";
+                            $res = self::getUniqueValueFromDB( $sql );
+                            
+                            // at least 1 cat house ?
+                            if ($res > 0) {
+                                $sql = "UPDATE player SET score_col_".($i+1)." = ".$this->gameConstants["COL_SUB_SCORING_COL_MAX"][$i]." WHERE player_id = '$active_player_id'";
 
-                            // Notify all players
-                            self::notifyAllPlayers( "columnSubScoringMax", "", array(
-                                'player_id' => $active_player_id,
-                                'player_name' => self::getActivePlayerName(),
-                                'column_number' => $i
-                                )
-                            );
+                                // Notify all players
+                                self::notifyAllPlayers( "columnSubScoringMax", "", array(
+                                    'player_id' => $active_player_id,
+                                    'player_name' => self::getActivePlayerName(),
+                                    'column_number' => $i
+                                    )
+                                );
+    
+                                self::notifyAllPlayers( "score", "", array(
+                                    'player_id' => $active_player_id,
+                                    // 'player_score' => $this->gameConstants["COL_SUB_SCORING_COL_MAX"][$i]
+                                    'player_score' => $player_score
+                                    )
+                                );
+                            // no cat house
+                            } else {
+                                $sql = "UPDATE player SET score_col_".($i+1)." = ".$this->gameConstants["COL_SUB_SCORING_COL_MIN"][$i]." WHERE player_id = '$active_player_id'";
 
-                            self::notifyAllPlayers( "score", "", array(
-                                'player_id' => $active_player_id,
-                                // 'player_score' => $this->gameConstants["COL_SUB_SCORING_COL_MAX"][$i]
-                                'player_score' => $player_score
-                                )
-                            );
+                                // Notify all players
+                                self::notifyAllPlayers( "columnSubScoringMin", "", array(
+                                    'player_id' => $active_player_id,
+                                    'player_name' => self::getActivePlayerName(),
+                                    'column_number' => $i
+                                    )
+                                );
+
+                                self::notifyAllPlayers( "score", "", array(
+                                    'player_id' => $active_player_id,
+                                    // 'player_score' => $this->gameConstants["COL_SUB_SCORING_COL_MIN"][$i]
+                                    'player_score' => $player_score
+                                    )
+                                );
+                            }
                         } else {
                             $sql = "UPDATE player SET score_col_".($i+1)." = ".$this->gameConstants["COL_SUB_SCORING_COL_MIN"][$i]." WHERE player_id = '$active_player_id'";
 
