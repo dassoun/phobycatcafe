@@ -55,6 +55,12 @@ function (dojo, declare) {
             // Constants
             this.gameConstants = gamedatas.constants;
 
+            // array to know what columns have been completed
+            // 0 -> non completed, 
+            // 1 -> completed but score min
+            // 2 -> completed with score max
+            let col_completed = [0, 0, 0, 0, 0];
+
             // Setting up player boards
             for( var player_id in gamedatas.players )
             {
@@ -212,11 +218,41 @@ function (dojo, declare) {
                     this.slideToObjectPos( $('sub_scoring_'+player_id+'_'+i), $('player_board_'+player_id), this.getXPixelCoordinatesSubScoring(i - 1), this.getYPixelCoordinatesSubScoring(i), 10 ).play();
                 }
 
+                // Columns scoring
+                for ( let i=1; i<=5; i++ ) {
+                    // alert(i + " : " + player["score_col_"+i]);
+                    if (player["score_col_"+i] > 0) {
+                        if (player["score_col_"+i] == this.gameConstants["COL_SUB_SCORING_COL_MAX"][i-1]) {
+                            col_completed[i-1] = 2;
+                            dojo.addClass( "sub_scoring_"+player_id+"_"+(i-1)+"_0", "ctc_column_scoring_validated" );
+                            dojo.addClass( "sub_scoring_"+player_id+"_"+(i-1)+"_1", "ctc_column_scoring_erased" );
+                        } else {
+                            col_completed[i-1] = 1;
+                            dojo.addClass( "sub_scoring_"+player_id+"_"+(i-1)+"_0", "ctc_column_scoring_erased" );
+                            dojo.addClass( "sub_scoring_"+player_id+"_"+(i-1)+"_1", "ctc_column_scoring_validated" );
+                        }
+                    }
+                }
+
                 // selected location for drawing
                 var location_chosen = gamedatas.players[player_id]["location_chosen"];
                 if (location_chosen != null) {
                     var coords = location_chosen.split(",");
                     dojo.addClass( "square_"+player_id+"_"+coords[0]+"_"+coords[1], "ctc_square_selected" );
+                }
+            }
+
+            // loop again on players for column scores
+            for( var player_id in gamedatas.players )
+            {
+                // We already add the ctc_column_scoring_validated class, so here we add only ctc_column_scoring_erased
+                for ( let i=0; i<5; i++ ) {
+                    if (col_completed[i] > 0) {
+                        if (!dojo.hasClass( "sub_scoring_"+player_id+"_"+i+"_0", "ctc_column_scoring_validated")
+                            && !dojo.hasClass( "sub_scoring_"+player_id+"_"+i+"_0", "ctc_column_scoring_erased")) {
+                                dojo.addClass( "sub_scoring_"+player_id+"_"+i+"_0", "ctc_column_scoring_erased" );
+                        }
+                    }
                 }
             }
             
