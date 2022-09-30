@@ -198,9 +198,33 @@ class phobycatcafe extends Table
     */
     function getGameProgression()
     {
-        // TODO: compute and return the game progression
+        $game_progression = 0;
+        
+        $sql = "SELECT DISTINCT player_id FROM player ORDER BY player_id ASC";
+        $players = self::getCollectionFromDb( $sql );
 
-        return 0;
+        foreach ( $players as $player_id => $player ) {
+            $sql = "SELECT coord_x, count(*) as nb FROM drawing WHERE player_id = $player_id AND state != 0 group by coord_x";
+            $column_progresses = self::getCollectionFromDb( $sql );
+
+            $tmp_progresses = array(0, 0, 0, 0, 0);
+            for ( $i=0; $i<5; $i++ ) {
+                if ( isset($column_progresses[$i]['nb']) ) {
+                    $tmp = round(($column_progresses[$i]['nb'] / $this->gameConstants["COL_FLOORS_NUMBER"][$i]) * 100);
+                    $tmp_progresses[$i] = $tmp;
+                }
+            }
+
+            arsort($tmp_progresses);
+
+            $tmp = round((($tmp_progresses[0] * 33) / 100) + (($tmp_progresses[1] * 33) / 100) + (($tmp_progresses[2] * 33) / 100));
+            
+            if ( $tmp > $game_progression ) {
+                $game_progression = $tmp;
+            }
+        }
+
+        return $game_progression;
     }
 
 
