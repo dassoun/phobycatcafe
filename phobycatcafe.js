@@ -1544,8 +1544,11 @@ function (dojo, declare) {
             dojo.subscribe( 'drawingLocationChosen', this, "notif_drawingLocationChosen" );
             dojo.subscribe( 'shapeChosen', this, "notif_shapeChosen" );
             dojo.subscribe( 'catChosen', this, "notif_catChosen" );
-            dojo.subscribe( 'columnSubScoringMax', this, "notif_columnSubScoringMax" );
-            dojo.subscribe( 'columnSubScoringMin', this, "notif_columnSubScoringMin" );
+            dojo.subscribe( 'columnSubScoringValidated', this, "notif_columnSubScoringValidated" );
+            dojo.subscribe( 'columnSubScoringErased', this, "notif_columnSubScoringErased" );
+            // dojo.subscribe( 'columnSubScoringMax', this, "notif_columnSubScoringMax" );
+            // dojo.subscribe( 'columnSubScoringMaxNotAvailable', this, "notif_columnSubScoringMaxNotAvailable" );
+            // dojo.subscribe( 'columnSubScoringMin', this, "notif_columnSubScoringMin" );
             dojo.subscribe( 'score', this, "notif_score" );
             dojo.subscribe( 'backToTurnDrawingPhase1', this, "notif_backToTurnDrawingPhase1" );
         },  
@@ -1786,7 +1789,9 @@ function (dojo, declare) {
 
             let players = this.gamedatas.players;
 
+            dojo.removeClass('sub_scoring_'+player_id+'_'+column_number+'_0', 'ctc_column_scoring_empty');
             dojo.addClass('sub_scoring_'+player_id+'_'+column_number+'_0', 'ctc_column_scoring_validated');
+            dojo.removeClass('sub_scoring_'+player_id+'_'+column_number+'_1', 'ctc_column_scoring_empty');
             dojo.addClass('sub_scoring_'+player_id+'_'+column_number+'_1', 'ctc_column_scoring_erased');
 
             for( var id in players ) {
@@ -1799,6 +1804,67 @@ function (dojo, declare) {
             console.log( '**** Notification : columnSubScoringMax Ended' );
         },
 
+        notif_columnSubScoringMaxNotAvailable: function( notif )
+        {
+            console.log( '**** Notification : columnSubScoringMaxNotAvailable' );
+
+            let player_id = notif.args.player_id;
+            let column_number = notif.args.column_number;
+
+            let players = this.gamedatas.players;
+
+            for( var id in players ) {
+                // console.log( id + " / " + players[id].id + "player_id");
+                dojo.removeClass($('sub_scoring_'+players[id].id+'_'+column_number+'_0'), 'ctc_column_scoring_empty');
+
+                if (!dojo.hasClass($('sub_scoring_'+players[id].id+'_'+column_number+'_0'), ctc_column_scoring_erased)) {
+                    dojo.addClass('sub_scoring_'+players[id].id+'_'+column_number+'_0', 'ctc_column_scoring_erased');
+                }
+            }
+
+            console.log( '**** Notification : columnSubScoringMaxNotAvailable Ended' );
+        },
+
+        notif_columnSubScoringValidated: function( notif )
+        {
+            console.log( '**** Notification : columnSubScoringValidated' );
+
+            params = notif.args.params;
+
+            for(var i= 0; i < params.length; i++) {
+                var player_id = params[i][0];
+                var column_number = params[i][1];
+                var score_number = params[i][2];
+
+                console.log('sub_scoring_'+player_id+'_'+column_number+'_'+score_number);
+
+                dojo.removeClass($('sub_scoring_'+player_id+'_'+column_number+'_'+score_number), 'ctc_column_scoring_empty');
+                dojo.addClass('sub_scoring_'+player_id+'_'+column_number+'_'+score_number, 'ctc_column_scoring_validated');
+            }
+
+            console.log( '**** Notification : columnSubScoringValidated Ended' );
+        },
+
+        notif_columnSubScoringErased: function( notif )
+        {
+            console.log( '**** Notification : columnSubScoringErased' );
+
+            params = notif.args.params;
+            
+            for(var i= 0; i < params.length; i++) {
+                var player_id = params[i][0];
+                var column_number = params[i][1];
+                var score_number = params[i][2];
+
+                console.log('sub_scoring_'+player_id+'_'+column_number+'_'+score_number);
+
+                dojo.removeClass($('sub_scoring_'+player_id+'_'+column_number+'_'+score_number), 'ctc_column_scoring_empty');
+                dojo.addClass('sub_scoring_'+player_id+'_'+column_number+'_'+score_number, 'ctc_column_scoring_erased');
+            }
+
+            console.log( '**** Notification : columnSubScoringErased Ended' );
+        },
+
         notif_columnSubScoringMin: function( notif )
         {
             console.log( '**** Notification : columnSubScoringMin' );
@@ -1806,6 +1872,7 @@ function (dojo, declare) {
             let player_id = notif.args.player_id;
             let column_number = notif.args.column_number;
 
+            
             dojo.addClass('sub_scoring_'+player_id+'_'+column_number+'_1', 'ctc_column_scoring_validated');
 
             console.log( '**** Notification : columnSubScoringMin Ended' );

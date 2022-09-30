@@ -105,9 +105,9 @@ $stats_type = array(
                     "name" => totranslate("Columns"),
                     "type" => "int" ),
 
-        "cat_footprints" => array("id" => 90,
-                    "name" => totranslate("Cat footprints"),
-                    "type" => "int" ),
+        // "cat_footprints" => array("id" => 90,
+        //             "name" => totranslate("Cat footprints"),
+        //             "type" => "int" ),
 /*
         Examples:    
         

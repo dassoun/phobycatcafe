@@ -98,7 +98,7 @@ class phobycatcafe extends Table
         self::initStat( "player", "cushion", 0 );
         self::initStat( "player", "mouse_toy", 0 );
         self::initStat( "player", "columns", 0 );
-        self::initStat( "player", "cat_footprints", 0 );
+        // self::initStat( "player", "cat_footprints", 0 );
 
         // TODO: setup the initial game situation here
 
@@ -628,9 +628,7 @@ class phobycatcafe extends Table
         self::dump( "cushion_score", $cushion_score );
         return ($cushion_score);
     }
-    ///////////////////////////
-    // JPB !!!!!!!!!!!!!!!!! //
-    ///////////////////////////
+
     function getMouseToyScore($player_id) {
         
         $sql = "SELECT coord_x, coord_y, state FROM drawing WHERE player_id = '$player_id' ORDER BY coord_x, coord_y";
@@ -774,6 +772,49 @@ class phobycatcafe extends Table
         $sql .= implode( $values, ',' );
         self::DbQuery( $sql );
     }
+
+    function getColumnScoreState() 
+    {
+        // Column score by player
+        $sql = "SELECT player_id, score_col_1, score_col_2, score_col_3, score_col_4, score_col_5 FROM player";
+        $player_score_col = self::getCollectionFromDB( $sql );
+
+        $column_score_state = array();
+        $column_score_state["global"] = array(0, 0, 0, 0, 0); // Columns already filled
+        
+        foreach ($player_score_col as $player_id => $score) {
+            $column_score_state["players"][$player_id] = array(array(0, 0), array(0, 0), array(0, 0), array(0, 0), array(0, 0)); // 0 => empty, 1 => validated, 2 => erased
+
+            for ( $i=0; $i<5; $i++ ) {
+                if ( $score["score_col_".($i+1)] > 0 ) {
+                    $column_score_state["global"][$i] = 1;
+
+                    if ( $score["score_col_".($i+1)] == $this->gameConstants["COL_SUB_SCORING_COL_MAX"][$i] ) {
+                        $column_score_state["players"][$player_id][$i][0] = 1;
+                        $column_score_state["players"][$player_id][$i][1] = 2;
+                    } else {
+                        $column_score_state["players"][$player_id][$i][0] = 2;
+                        $column_score_state["players"][$player_id][$i][1] = 1;
+                    }
+                }
+            }
+        }
+
+        self::dump("column_score_state / global", $column_score_state["global"]);
+
+        foreach ( $player_score_col as $player_id => $score_col ) {
+            for ( $i=0; $i<5; $i++ ) {
+                if ( $column_score_state["global"][$i] == 1 ) {
+                    if ( $column_score_state["players"][$player_id][$i][0] == 0 ) {
+                        $column_score_state["players"][$player_id][$i][0] = 2;
+                    }
+                }
+            }
+        }
+
+        return $column_score_state;
+    }
+
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
@@ -1577,89 +1618,127 @@ class phobycatcafe extends Table
         }
     }
 
+    function stEndPlayerTurn()
+    {
+        self::trace( "stEndPlayerTurn" );
+
+        $sql = "SELECT COUNT(*) AS nb FROM player WHERE has_passed = true OR (first_chosen_played_order IS NOT NULL AND second_chosen_played_order IS NOT NULL)";
+        $res = self::getObjectFromDB( $sql );
+        if ($res['nb'] < (self::getPlayersNumber())) {
+            $this->gamestate->nextState( "nextPlayer" );
+        } else {
+            $this->gamestate->nextState( "goColumnScoring" );
+        }
+    }
+
     // Check columns scoring
     function stColumnScoring()
     {
         self::trace( "stColumnScoring" );
 
-        $active_player_id = self::getActivePlayerId();
-        $sql = "SELECT score_col_1, score_col_2, score_col_3, score_col_4, score_col_5 FROM player WHERE player_id = '$active_player_id'";
-        $player_info = self::getObjectFromDB( $sql );
+        // Initial state of column score, before this ans of round calculation
+        $initial_column_score_state = $this->getColumnScoreState();
 
-        $nbCompletedColumns = 0;
+        /////////////////////////////////////////////////////////////////////////
+        // Calculation of the new state of column score
+        /////////////////////////////////////////////////////////////////////////
 
-        $player_score = 0;
-        $sql = "SELECT (score_cat_1 + score_cat_2 + score_cat_3 + score_cat_4 + score_cat_5 + score_cat_6 + score_col_1 + score_col_2 + score_col_3 + score_col_4 + score_col_5) AS player_score FROM player WHERE player_id = '$active_player_id'";
-        $player_score = self::getUniqueValueFromDB( $sql );
+        // Column score by player
+        $sql = "SELECT player_id, score_col_1, score_col_2, score_col_3, score_col_4, score_col_5 FROM player";
+        $player_score_col = self::getCollectionFromDB( $sql );
 
-//        $players = $this->loadPlayersBasicInfos();
+        $boards = self::getPlayerBoards();
 
-//        foreach ($players as $player_id => $info) {
-            for ($i=0; $i<5; $i++) {
-                self::trace( "---- i = $i ----" );
-                $col_name = "score_col_".($i + 1);
-                if ($player_info[$col_name] == 0) {
-                    $sql = "SELECT COUNT(state) FROM drawing WHERE player_id = $active_player_id AND coord_x = $i AND state != 0";
-                    $res = self::getUniqueValueFromDB( $sql );
+        self::dump( 'player_score_col', $player_score_col );
 
-                    self::trace( "---- nb = $res / ".$this->gameConstants["COL_FLOORS_NUMBER"][$i]." ----" );
+        foreach ( $boards as $player_id => $board ) {
+            for ( $i=0; $i<5; $i++ ) {
+                self::dump( 'boards ------------- ', $player_score_col[$player_id]["score_col_".($i+1)] );
+                if ( $player_score_col[$player_id]["score_col_".($i+1)] == 0) {
+                    // is there a cat house in the column ?
+                    $cat_house_in_col = false;
+                    // nb of filled cells in the column
+                    $nb_shape = 0;
 
-                    if ($res == $this->gameConstants["COL_FLOORS_NUMBER"][$i]) {
-                        $sql = "SELECT COUNT(*) FROM player WHERE score_col_".($i+1)." != 0";
-                        $res = self::getUniqueValueFromDB( $sql );
+                    for ( $j=0; $j<6; $j++ ) {
+                        if ( isset($board[$i][$j] )) {
+                            if ($board[$i][$j] > 0 ) {
+                                $nb_shape++;
 
-                        if ($res == 0) {
-                            $sql = "UPDATE player SET score_col_".($i+1)." = ".$this->gameConstants["COL_SUB_SCORING_COL_MAX"][$i]." WHERE player_id = '$active_player_id'";
+                                if ($board[$i][$j] == $this->gameConstants["SHAPE_CAT_HOUSE"] ) {
+                                    $cat_house_in_col = true;
 
-                            // Notify all players
-                            self::notifyAllPlayers( "columnSubScoringMax", "", array(
-                                'player_id' => $active_player_id,
-                                'player_name' => self::getActivePlayerName(),
-                                'column_number' => $i
-                                )
-                            );
-
-                            self::notifyAllPlayers( "score", "", array(
-                                'player_id' => $active_player_id,
-                                // 'player_score' => $this->gameConstants["COL_SUB_SCORING_COL_MAX"][$i]
-                                'player_score' => $player_score
-                                )
-                            );
-                        } else {
-                            $sql = "UPDATE player SET score_col_".($i+1)." = ".$this->gameConstants["COL_SUB_SCORING_COL_MIN"][$i]." WHERE player_id = '$active_player_id'";
-
-                            // Notify all players
-                            self::notifyAllPlayers( "columnSubScoringMin", "", array(
-                                'player_id' => $active_player_id,
-                                'player_name' => self::getActivePlayerName(),
-                                'column_number' => $i
-                                )
-                            );
-
-                            self::notifyAllPlayers( "score", "", array(
-                                'player_id' => $active_player_id,
-                                // 'player_score' => $this->gameConstants["COL_SUB_SCORING_COL_MIN"][$i]
-                                'player_score' => $player_score
-                                )
-                            );
+                                    // self::trace( "!!!!!!!!!!!!!!!!!!!!! $player_id / $i, $j : ".$boards[$player_id][$i][$j] );
+                                }
+                            }
                         }
+                    }
 
-                        self::DbQuery($sql);
+                    if ( $nb_shape == $this->gameConstants["COL_FLOORS_NUMBER"][$i] ) {
+
+                        // self::trace( "!!!!!!!!!!!!!!!!!!!!! $player_id / $i" );
+
+                        // We can score the highest only if we have a cat house in the column, and the column not not already be filled by anyone
+                        if ( $cat_house_in_col && $initial_column_score_state["global"][$i] == 0 ) {
+                            self::trace( "!!!!!!!!!!!!!!!!!!!!! $player_id / $i MAX" );
+
+                            $sql = "UPDATE player SET score_col_".($i+1)." = ".$this->gameConstants["COL_SUB_SCORING_COL_MAX"][$i]." WHERE player_id = '$player_id'";
+                            self::DbQuery($sql);
+
+                        } else {
+                            self::trace( "!!!!!!!!!!!!!!!!!!!!! $player_id / $i MIN" );
+
+                            $sql = "UPDATE player SET score_col_".($i+1)." = ".$this->gameConstants["COL_SUB_SCORING_COL_MIN"][$i]." WHERE player_id = '$player_id'";
+                            self::DbQuery($sql);
+
+                        }
                     }
                 }
             }
-        // }
-
-        $sql = "SELECT COUNT(*) AS nb FROM player WHERE has_passed = true OR (first_chosen_played_order IS NOT NULL AND second_chosen_played_order IS NOT NULL)";
-        $res = self::getObjectFromDB( $sql );
-        if ($res['nb'] < (self::getPlayersNumber())) {
-            $this->gamestate->nextState( "columnsScoresChecked" );
-        } else {
-            $this->gamestate->nextState( "nextRound" );
         }
 
+        $new_column_score_state = $this->getColumnScoreState();
 
-        // $this->gamestate->nextState("");
+        $notify_validated_col = array();
+        $notify_erased_col = array();
+
+        foreach ( $player_score_col as $player_id => $board ) {
+            for ( $i=0; $i<5; $i++ ) {
+                if ( $initial_column_score_state["players"][$player_id][$i][0] != $new_column_score_state["players"][$player_id][$i][0] ) {
+                    if ( $new_column_score_state["players"][$player_id][$i][0] == 1 ) {
+                        $notify_validated_col[] = array($player_id, $i, 0);
+                    } else {
+                        $notify_erased_col[] = array($player_id, $i, 0);
+                    }
+                }
+                if ( $initial_column_score_state["players"][$player_id][$i][1] != $new_column_score_state["players"][$player_id][$i][1] ) {
+                    if ( $new_column_score_state["players"][$player_id][$i][1] == 1 ) {
+                        $notify_validated_col[] = array($player_id, $i, 1);
+                    } else {
+                        $notify_erased_col[] = array($player_id, $i, 1);
+                    }
+                }
+            }
+        }
+
+        // Notify all players
+        self::notifyAllPlayers( "columnSubScoringValidated", "", array(
+            'params' => $notify_validated_col
+            )
+        );
+
+        self::notifyAllPlayers( "columnSubScoringErased", "", array(
+            'params' => $notify_erased_col
+            )
+        );
+
+        // self::dump( 'initial_column_score_state', $initial_column_score_state["players"] );
+        // self::dump( 'new_column_score_state', $new_column_score_state["players"] );
+
+        self::dump( 'notify_validated_col', $notify_validated_col );
+        self::dump( 'notify_erased_col', $notify_erased_col );
+
+        $this->gamestate->nextState("");
     }
 
     function stSetupDrawing()
@@ -1762,7 +1841,8 @@ class phobycatcafe extends Table
             $mouseToyScore = $this->getMouseToyScore($player_id);
 
             $columnsScore = $this->getColumnsScore($player_id);
-            $catFootprintsScore = $this->getCatFootprintsScore($player_id);
+            // $catFootprintsScore = $this->getCatFootprintsScore($player_id);
+            $catFootprintsScore = 0;
 
 
             self::setStat( $catHouseScore, "cat_house", $player_id );
@@ -1773,7 +1853,7 @@ class phobycatcafe extends Table
             self::setStat( $mouseToyScore, "mouse_toy", $player_id );
 
             self::setStat( $columnsScore, "columns", $player_id );
-            self::setStat( $catFootprintsScore, "cat_footprints", $player_id );
+            // self::setStat( $catFootprintsScore, "cat_footprints", $player_id );
 
             $totalScore = $catHouseScore + $ballOfYarnScore + $butterflyToyScore + $foodBowlScore + $cushionScore + $mouseToyScore + $columnsScore + $catFootprintsScore;
 

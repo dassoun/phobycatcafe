@@ -157,33 +157,42 @@ $machinestates = array(
         "transitions" => array( "catChosen" => 12, "shapeChoiceCancelled" => 7 )
     ),
 
+    // Next player for same round or column scoring ?
     12 => array(
+        "name" => "endPlayerTurn",
+        "description" => '',
+        "type" => "game",
+        "action" => "stEndPlayerTurn",
+        "transitions" => array( "nextPlayer" => 8, "goColumnScoring" => 13 )
+    ),
+
+    13 => array(
         "name" => "columnScoring",
         "description" => '',
         "type" => "game",
         "action" => "stColumnScoring",
-        "transitions" => array( "columnsScoresChecked" => 8, "nextRound" => 13 )
+        "transitions" => array( "nextRound" => 14 )
     ),
 
     // New round or end game => stats calculation ?
-    13 => array(
+    14 => array(
         "name" => "nextRound",
         "description" => '',
         "type" => "game",
         "action" => "stNextRound",
-        "transitions" => array( "goToCleanBoardForNextRound" => 14, "goStatsCalculation" => 17 )
+        "transitions" => array( "goToCleanBoardForNextRound" => 15, "goStatsCalculation" => 17 )
     ),
 
-    14 => array(
+    15 => array(
         "name" => "cleanBoardForNextRound",
         "description" => '',
         "type" => "game",
         "args" => "argCleanBoardForNextRound",
         "action" => "stCleanBoardForNextRound",
-        "transitions" => array( "goToSetupNewRound" => 15 )
+        "transitions" => array( "goToSetupNewRound" => 16 )
     ),
 
-    15 => array(
+    16 => array(
         "name" => "setupNewRound",
         "description" => '',
         "type" => "game",
