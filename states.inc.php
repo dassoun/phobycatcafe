@@ -2,7 +2,7 @@
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * phobycatcafe implementation : © <Your name here> <Your email address here>
+ * phobycatcafe implementation : © Julien Coignet <breddabasse@hotmail.com>
  *
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -205,7 +205,6 @@ $machinestates = array(
         "name" => "statsCalculation",
         "description" => '',
         "type" => "game",
-        // "args" => "argStatsCalculation",
         "action" => "stStatsCalculation",
         "transitions" => array( "" => 99 )
     ),
