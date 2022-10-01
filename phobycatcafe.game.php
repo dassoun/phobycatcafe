@@ -183,6 +183,9 @@ class phobycatcafe extends Table
         $sql = "SELECT id, dice_value, player_id FROM dice ORDER BY id ASC";
         $result['dices'] = self::getCollectionFromDb( $sql );
 
+        $column_score_state = $this->getColumnScoreState();
+        $result['column_score_state'] = $column_score_state;
+
         return $result;
     }
 
@@ -1940,6 +1943,33 @@ class phobycatcafe extends Table
     	
         if ($state['type'] === "activeplayer") {
             switch ($statename) {
+                case "playerTurnPicking":
+                    $sql = "SELECT id, dice_value FROM dice";
+                    $dices = self::getObjectListFromDB( $sql );
+
+                    $nb = count($dices);
+                    $dice_number = rand(0, ($nb-1));
+
+                    $this->pickDice( $dices[$dice_number]["id"], $dices[$dice_number]["dice_value"] );
+
+                    break;
+                
+                case "playerTurnDrawingPhase1":
+                    $this->pass( self::getActivePlayerId() );
+                    break;
+
+                case "playerTurnDrawingPhase2":
+                    $this->cancelLocationDiceChoice( self::getActivePlayerId() );
+                    break;
+
+                case "playerTurnDrawingPhase3":
+                    $this->cancelLocationChoice( self::getActivePlayerId() );
+                    break;
+
+                case "playerTurnCatSelection":
+                    $this->cancelShapeChoice( self::getActivePlayerId() );
+                    break;
+
                 default:
                     $this->gamestate->nextState( "zombiePass" );
                 	break;

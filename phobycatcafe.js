@@ -359,10 +359,42 @@ function (dojo, declare) {
             //     }
             // }
 
-            // Add events on active elements (the third parameter is the method that will be called when the event defined by the second parameter happens - this method must be declared beforehand)
-            // this.addEventToClass( "ctc_dice_pickable", "onclick", "onClickDice");
+            // Column score state
+            column_score_state = gamedatas.column_score_state;
 
-            // this.addEventToClass( "ctc_dice_player", "onclick", "onClickPlayerDice");
+console.log('column_score_state');
+console.log(column_score_state.players);
+
+            for( var player_id in column_score_state.players ) {
+                console.log(column_score_state.players[player_id]);
+                
+                for (var i=0; i<5; i++) {
+                    for (var j=0; j<2; j++) {
+                        var state = column_score_state.players[player_id][i][j];
+                        if ( state != 0 ) {
+                            dojo.removeClass($('sub_scoring_'+player_id+'_'+i+'_'+j), 'ctc_column_scoring_empty');
+
+                            if ( state == 1 ) {
+                                dojo.addClass('sub_scoring_'+player_id+'_'+i+'_'+j, 'ctc_column_scoring_validated');
+                            } else {
+                                dojo.addClass('sub_scoring_'+player_id+'_'+i+'_'+j, 'ctc_column_scoring_erased');
+                            }
+                        }
+                    }
+                }
+            }
+
+            // for(var i= 0; i < params.length; i++) {
+            //     var player_id = params[i][0];
+            //     var column_number = params[i][1];
+            //     var score_number = params[i][2];
+
+            //     console.log('sub_scoring_'+player_id+'_'+column_number+'_'+score_number);
+
+            //     dojo.removeClass($('sub_scoring_'+player_id+'_'+column_number+'_'+score_number), 'ctc_column_scoring_empty');
+            //     dojo.addClass('sub_scoring_'+player_id+'_'+column_number+'_'+score_number, 'ctc_column_scoring_validated');
+            // }
+
 
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
@@ -1872,8 +1904,6 @@ function (dojo, declare) {
                 var column_number = params[i][1];
                 var score_number = params[i][2];
 
-                console.log('sub_scoring_'+player_id+'_'+column_number+'_'+score_number);
-
                 dojo.removeClass($('sub_scoring_'+player_id+'_'+column_number+'_'+score_number), 'ctc_column_scoring_empty');
                 dojo.addClass('sub_scoring_'+player_id+'_'+column_number+'_'+score_number, 'ctc_column_scoring_validated');
             }
@@ -1891,8 +1921,6 @@ function (dojo, declare) {
                 var player_id = params[i][0];
                 var column_number = params[i][1];
                 var score_number = params[i][2];
-
-                console.log('sub_scoring_'+player_id+'_'+column_number+'_'+score_number);
 
                 dojo.removeClass($('sub_scoring_'+player_id+'_'+column_number+'_'+score_number), 'ctc_column_scoring_empty');
                 dojo.addClass('sub_scoring_'+player_id+'_'+column_number+'_'+score_number, 'ctc_column_scoring_erased');
