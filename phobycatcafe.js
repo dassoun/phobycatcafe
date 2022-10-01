@@ -23,7 +23,7 @@ define([
 function (dojo, declare) {
     return declare("bgagame.phobycatcafe", ebg.core.gamegui, {
         constructor: function(){
-            console.log('phobycatcafe constructor');
+            // console.log('phobycatcafe constructor');
               
             // Here, you can init the global variables of your user interface
             // Example:
@@ -46,9 +46,9 @@ function (dojo, declare) {
         
         setup: function( gamedatas )
         {
-            console.log( "$$$ Starting game setup" );
+            // console.log( "$$$ Starting game setup" );
 
-            console.log( gamedatas );
+            // console.log( gamedatas );
             
             this.connections = [];
 
@@ -59,7 +59,7 @@ function (dojo, declare) {
             // 0 -> non completed, 
             // 1 -> completed but score min
             // 2 -> completed with score max
-            let col_completed = [0, 0, 0, 0, 0];
+            // let col_completed = [0, 0, 0, 0, 0];
 
             // Setting up player boards
             for( var player_id in gamedatas.players )
@@ -174,7 +174,7 @@ function (dojo, declare) {
 
                     this.slideToObjectPos( $('cat_footprint_'+player_id+'_'+i), $('player_board_'+player_id), this.getXPixelCoordinatesFootprints(i), this.getYPixelCoordinatesFootprints(i), 10 ).play();
                 }
-                console.log('available : '+available);
+                // console.log('available : '+available);
                 for (let i=used; i<used+available; i++) {
                     dojo.place( this.format_block('jstpl_cat_footprint', {
                         player_id:player_id,
@@ -218,21 +218,21 @@ function (dojo, declare) {
                     this.slideToObjectPos( $('sub_scoring_'+player_id+'_'+i), $('player_board_'+player_id), this.getXPixelCoordinatesSubScoring(i - 1), this.getYPixelCoordinatesSubScoring(i), 10 ).play();
                 }
 
-                // Columns scoring
-                for ( let i=1; i<=5; i++ ) {
-                    // alert(i + " : " + player["score_col_"+i]);
-                    if (player["score_col_"+i] > 0) {
-                        if (player["score_col_"+i] == this.gameConstants["COL_SUB_SCORING_COL_MAX"][i-1]) {
-                            col_completed[i-1] = 2;
-                            dojo.addClass( "sub_scoring_"+player_id+"_"+(i-1)+"_0", "ctc_column_scoring_validated" );
-                            dojo.addClass( "sub_scoring_"+player_id+"_"+(i-1)+"_1", "ctc_column_scoring_erased" );
-                        } else {
-                            col_completed[i-1] = 1;
-                            dojo.addClass( "sub_scoring_"+player_id+"_"+(i-1)+"_0", "ctc_column_scoring_erased" );
-                            dojo.addClass( "sub_scoring_"+player_id+"_"+(i-1)+"_1", "ctc_column_scoring_validated" );
-                        }
-                    }
-                }
+                // // Columns scoring
+                // for ( let i=1; i<=5; i++ ) {
+                //     // alert(i + " : " + player["score_col_"+i]);
+                //     if (player["score_col_"+i] > 0) {
+                //         if (player["score_col_"+i] == this.gameConstants["COL_SUB_SCORING_COL_MAX"][i-1]) {
+                //             col_completed[i-1] = 2;
+                //             dojo.addClass( "sub_scoring_"+player_id+"_"+(i-1)+"_0", "ctc_column_scoring_validated" );
+                //             dojo.addClass( "sub_scoring_"+player_id+"_"+(i-1)+"_1", "ctc_column_scoring_erased" );
+                //         } else {
+                //             col_completed[i-1] = 1;
+                //             dojo.addClass( "sub_scoring_"+player_id+"_"+(i-1)+"_0", "ctc_column_scoring_erased" );
+                //             dojo.addClass( "sub_scoring_"+player_id+"_"+(i-1)+"_1", "ctc_column_scoring_validated" );
+                //         }
+                //     }
+                // }
 
                 // selected location for drawing
                 var location_chosen = gamedatas.players[player_id]["location_chosen"];
@@ -242,41 +242,25 @@ function (dojo, declare) {
                 }
             }
 
-            // loop again on players for column scores
-            for( var player_id in gamedatas.players )
-            {
-                // We already add the ctc_column_scoring_validated class, so here we add only ctc_column_scoring_erased
-                for ( let i=0; i<5; i++ ) {
-                    if (col_completed[i] > 0) {
-                        if (!dojo.hasClass( "sub_scoring_"+player_id+"_"+i+"_0", "ctc_column_scoring_validated")
-                            && !dojo.hasClass( "sub_scoring_"+player_id+"_"+i+"_0", "ctc_column_scoring_erased")) {
-                                dojo.addClass( "sub_scoring_"+player_id+"_"+i+"_0", "ctc_column_scoring_erased" );
-                        }
-                    }
-                }
-            }
+            // // loop again on players for column scores
+            // for( var player_id in gamedatas.players )
+            // {
+            //     // We already add the ctc_column_scoring_validated class, so here we add only ctc_column_scoring_erased
+            //     for ( let i=0; i<5; i++ ) {
+            //         if (col_completed[i] > 0) {
+            //             if (!dojo.hasClass( "sub_scoring_"+player_id+"_"+i+"_0", "ctc_column_scoring_validated")
+            //                 && !dojo.hasClass( "sub_scoring_"+player_id+"_"+i+"_0", "ctc_column_scoring_erased")) {
+            //                     dojo.addClass( "sub_scoring_"+player_id+"_"+i+"_0", "ctc_column_scoring_erased" );
+            //             }
+            //         }
+            //     }
+            // }
             
             // TODO: Set up your game interface here, according to "gamedatas"
             // rolled dices
             this.setupDices( gamedatas );
 
             dices = gamedatas.dices;
-
-            // console.log( "dices :");
-            // console.log( dices );
-
-            // for (var id in dices) {
-            //     let elmt_id = 'dice_'+dices[id].id+'_'+dices[id].dice_value;
-            //     let elmt = $(elmt_id);
-            //     //dojo.addClass(elmt, 'ctc_square_selectionnable');
-
-            //     if( this.isCurrentPlayerActive() ) {
-            //         this.connections.push( dojo.connect( elmt , 'click', () => this.onClickDice(elmt_id) ) );
-            //     }
-            // }
-
-            // console.log( "Connections :" );
-            // console.log( this.connections );
 
             // picked dices
             let nb_total_dice = 0;
@@ -313,60 +297,15 @@ function (dojo, declare) {
                     }
                 }
             }
-            
-            
-
-            // let nb_total_dice = 0;
-            // let nb_selected_dice = 0;
-            // let remaining_dice_val = -1;
-            // for( var id in gamedatas.dices )
-            // {
-            //     nb_total_dice++;
-
-            //     var dice = gamedatas.dices[id];
-
-            //     console.log( dice );
-
-            //     if (dice.dice_value !== null) {
-            //         if (dice.player_id === null) {
-            //             remaining_dice_val = dice.dice_value;
-            //             console.log( "face : " + dice.dice_value );
-            //             dojo.place( this.format_block('jstpl_dice', {
-            //                 dice_face:dice.dice_value,
-            //                 id:id,
-            //                 dice:dice.dice_value,
-            //             } ), $ ( 'ctc_dice_area' ) );
-            //         } else {
-            //             // dojo.place( this.format_block('jstpl_dice', {
-            //             //     dice_face:0,
-            //             //     id:id,
-            //             //     dice:dice.dice_value,
-            //             // } ), $ ( 'ctc_dice_area' ) );
-
-            //             nb_selected_dice++;
-            //             dojo.removeClass( 'dice_player_' + dice.player_id + '_0', 'ctc_dice_0' );
-            //             dojo.addClass( 'dice_player_' + dice.player_id + '_0', 'ctc_dice_' + dice.dice_value );
-            //         }
-            //     }
-            // }
-
-            // Everybody has chosen his dice. The one remaining is available for everybody.
-            // if ((nb_total_dice - nb_selected_dice) == 1) {
-            //     for( var player_id in gamedatas.players )
-            //     {
-            //         dojo.removeClass( 'dice_player_' + player_id + '_1', 'ctc_dice_0' );
-            //         dojo.addClass( 'dice_player_' + player_id + '_1', 'ctc_dice_' + remaining_dice_val );
-            //     }
-            // }
 
             // Column score state
             column_score_state = gamedatas.column_score_state;
 
-console.log('column_score_state');
-console.log(column_score_state.players);
+            // console.log('column_score_state');
+            // console.log(column_score_state.players);
 
             for( var player_id in column_score_state.players ) {
-                console.log(column_score_state.players[player_id]);
+                // console.log(column_score_state.players[player_id]);
                 
                 for (var i=0; i<5; i++) {
                     for (var j=0; j<2; j++) {
@@ -384,22 +323,10 @@ console.log(column_score_state.players);
                 }
             }
 
-            // for(var i= 0; i < params.length; i++) {
-            //     var player_id = params[i][0];
-            //     var column_number = params[i][1];
-            //     var score_number = params[i][2];
-
-            //     console.log('sub_scoring_'+player_id+'_'+column_number+'_'+score_number);
-
-            //     dojo.removeClass($('sub_scoring_'+player_id+'_'+column_number+'_'+score_number), 'ctc_column_scoring_empty');
-            //     dojo.addClass('sub_scoring_'+player_id+'_'+column_number+'_'+score_number, 'ctc_column_scoring_validated');
-            // }
-
-
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
 
-            console.log( "Ending game setup" );
+            // console.log( "Ending game setup" );
         },
        
 
@@ -411,7 +338,7 @@ console.log(column_score_state.players);
         //
         onEnteringState: function( stateName, args )
         {
-            console.log( 'Entering state: '+stateName );
+            // console.log( 'Entering state: '+stateName );
             
             switch( stateName )
             {
@@ -435,8 +362,8 @@ console.log(column_score_state.players);
                 case 'playerTurnPicking':
                     if( this.isCurrentPlayerActive() ) {
                         dices = args.args.dices;
-                        console.log( "dices :" );
-                        console.log( dices );
+                        // console.log( "dices :" );
+                        // console.log( dices );
                         for (var id in dices) {
                             if (dices[id].player_id == null) {
                                 let elmt_id = 'dice_'+dices[id].id+'_'+dices[id].dice_value;
@@ -444,25 +371,22 @@ console.log(column_score_state.players);
     
                                 this.connections.push( dojo.connect( elmt , 'click', () => this.onClickDice(elmt_id) ) );
     
-                                console.log( "elmt_id :" + elmt_id );
+                                // console.log( "elmt_id :" + elmt_id );
                             }
                         }
                     }
 
-                    console.log( "Connections :" );
-                    console.log( this.connections );
+                    // console.log( "Connections :" );
+                    // console.log( this.connections );
                     break;
 
                 case 'setupDrawing':
-                    // this.addEventToClass( "ctc_dice_player", "onclick", "onClickPlayerDice");
                     
                     break;
 
                 // Choose dice for location
                 case 'playerTurnDrawingPhase1':
-                    //this.updatePossibleDrawings( args.args.possibleDrawings );
                     this.updatePlayerSecondDice( args.args );
-                    // this.addEventToClass( "ctc_dice_player", "onclick", "onClickPlayerDice");
 
                     var player_id = this.getActivePlayerId();
                     if( this.isCurrentPlayerActive() ) {
@@ -470,7 +394,6 @@ console.log(column_score_state.players);
                             let elmt_id = 'dice_player_'+player_id+'_'+i;
                             let elmt = $(elmt_id);
 
-                            // this.connections.push( dojo.connect( elmt , 'click', (evt) => this.onClickPlayerDice(evt) ) );
                             this.connections.push( dojo.connect( elmt , 'click', () => this.onClickPlayerDice(elmt_id) ) );
                         }
                     }
@@ -479,16 +402,9 @@ console.log(column_score_state.players);
 
                 // Choose location for drawing
                 case 'playerTurnDrawingPhase2':
-                    // this.updatePlayerBoardForLocationChoice( args.args );
                     this.updatePlayerBoardForLocationChoice( args.args );
-                    // this.addEventToClass( "ctc_square_selectionnable", "onclick", "onClickSquare");
-                    // var elements = document.querySelectorAll(".ctc_square_selectionnable");
-                    // for (var i = 0; i < elements.length; i++) {
-                    //     elements[i].addEventListener("click", (evt) => this.onClickSquare(evt));
-                    // }
-                    // dojo.query( '.ctc_square_selectionnable' ).connect( 'click', this, 'onClickSquare' );
+
                     if( this.isCurrentPlayerActive() ) {
-                        //this.activateSquares( args.args.squares )
 
                         let possibleLocations = args.args.possibleLocations;
 
@@ -497,10 +413,8 @@ console.log(column_score_state.players);
                         for (var id in possibleLocations[player_id]) {
                             let x = possibleLocations[player_id][id].x;
                             let y = possibleLocations[player_id][id].y;
-                            //dojo.removeClass($('dice_player_'+id+'_1'), 'ctc_dice_0');
 
                             let elmt = $('square_'+player_id+'_'+x+'_'+y);
-                            //dojo.addClass(elmt, 'ctc_square_selectionnable');
 
                             this.connections.push( dojo.connect( elmt , 'click', () => this.onClickSquare('square_'+player_id+'_'+x+'_'+y) ) );
                         }
@@ -509,16 +423,9 @@ console.log(column_score_state.players);
 
                 case 'playerTurnDrawingPhase3':
                     this.updatePlayerBoardForShapeSelection( args.args );
-                    // this.addEventToClass("ctc_shape_selectionnable", "onclick", "onClickShape");
-                    // var elements = document.querySelectorAll(".ctc_shape_selectionnable");
-                    // for (var i = 0; i < elements.length; i++) {
-                    //     elements[i].addEventListener("click", (evt) => this.onClickShape(evt));
-                    // }
-                    
-                    // dojo.query( '.ctc_shape_selectionnable' ).connect( 'click', this, 'onClickShape' );
 
-                    console.log("args.args :");
-                    console.log(args.args);
+                    // console.log("args.args :");
+                    // console.log(args.args);
 
                     player_id = args.args.player_id; 
                     let min_shape = args.args.min_shape;
@@ -528,22 +435,14 @@ console.log(column_score_state.players);
                         let elmt_id = 'shape_selection_'+player_id+'_'+i;
                         let elmt = $(elmt_id);
 
-                        console.log('------> elmt_id : ' + elmt_id);
+                        // console.log('------> elmt_id : ' + elmt_id);
                         this.connections.push( dojo.connect( elmt , 'click', () => this.onClickShape(elmt_id) ) );
-
-                        //dojo.addClass($('shape_selection_'+player_id+'_'+i), 'ctc_shape_selectionnable');
                     }
 
                     break;
 
                 case 'playerTurnCatSelection':
                     this.updatePlayerBoardForCatSelection( args.args );
-                    // this.addEventToClass("ctc_cat_selectionnable", "onclick", "onClickCat");
-                    // var elements = document.querySelectorAll(".ctc_cat_selectionnable");
-                    // for (var i = 0; i < elements.length; i++) {
-                    //     elements[i].addEventListener("click", (evt) => this.onClickCat(evt));
-                    // }
-                    // dojo.query( '.ctc_cat_selectionnable' ).connect( 'click', this, 'onClickCat' );
 
                     player_id = args.args.player_id;
 
@@ -578,7 +477,7 @@ console.log(column_score_state.players);
         //
         onLeavingState: function( stateName )
         {
-            console.log( 'Leaving state: '+stateName );
+            // console.log( 'Leaving state: '+stateName );
             
             switch( stateName )
             {
@@ -597,11 +496,10 @@ console.log(column_score_state.players);
                 break;
 
             case 'setupDices':
-                // this.desableConnections();
+                
                 break;
 
             case 'playerTurnPicking':
-                // this.removeEventFromClass( "ctc_dice_pickable", "onclick", "onClickDice" );
                 dojo.forEach(this.connections, dojo.disconnect);
                 this.connections = [];
                 break;
@@ -628,15 +526,6 @@ console.log(column_score_state.players);
                 break;
 
             case 'playerTurnDrawingPhase3':
-                // var elements = document.querySelectorAll(".ctc_shape_selectionnable");
-                // for (var i = 0; i < elements.length; i++) {
-                //     elements[i].removeEventListener("click", "onClickShape");
-                // }
-
-                // dojo.query('.ctc_shape_selectionnable').forEach((node) => {
-                //     this.disconnect(node, 'click'); // here we remove the eventListener with dojo
-                // });
-
                 dojo.forEach(this.connections, dojo.disconnect);
                 this.connections = [];
 
@@ -650,14 +539,6 @@ console.log(column_score_state.players);
                 break;
 
             case 'playerTurnCatSelection':
-                // var elements = document.querySelectorAll(".ctc_cat_selectionnable");
-                // for (var i = 0; i < elements.length; i++) {
-                //     elements[i].removeEventListener("click", "onClickCat");
-                // }
-                // dojo.query('.ctc_cat_selectionnable').forEach((node) => {
-                //     this.disconnect(node, 'click'); // here we remove the eventListener with dojo
-                // });
-
                 dojo.forEach(this.connections, dojo.disconnect);
                 this.connections = [];
 
@@ -683,7 +564,7 @@ console.log(column_score_state.players);
         //        
         onUpdateActionButtons: function( stateName, args )
         {
-            console.log( 'onUpdateActionButtons: '+stateName );
+            // console.log( 'onUpdateActionButtons: '+stateName );
             // console.log( '****************' );
             // console.log( args );
             // console.log( '****************' );
@@ -732,8 +613,7 @@ console.log(column_score_state.players);
 
         onClickDice: function( elmt_id )
         {
-            console.log( '$$$$ Event : onClickDice' );
-            // dojo.stopEvent( evt );
+            // console.log( '$$$$ Event : onClickDice' );
 
             if( ! this.checkAction( 'pickDice' ) )
             { return; }
@@ -741,44 +621,22 @@ console.log(column_score_state.players);
             var dice_id = elmt_id.split('_')[1];
             var dice_face = elmt_id.split('_')[2];
             
-            console.log( '$$$$ Selected dice : (' + dice_id + ')' );
+            // console.log( '$$$$ Selected dice : (' + dice_id + ')' );
             
             if ( this.isCurrentPlayerActive() ) {
                 this.ajaxcall( "/phobycatcafe/phobycatcafe/pickDice.html", { lock: true, dice_id: dice_id, dice_face: dice_face }, this, function( result ) {}, function( is_error ) {} );
             }
         },
 
-        // onClickPlayerDice: function( evt ) {
-        //     console.log( '$$$$ Event : onClickPlayerDice' );
-        //     dojo.stopEvent( evt );
-
-        //     if( ! this.checkAction( 'chooseDiceForLocation' ) )
-        //     { return; }
-
-        //     var node = evt.currentTarget.id;
-        //     console.log( 'Node : ' + node );
-
-        //     var player_id = node.split('_')[2];
-        //     var num_player_dice = node.split('_')[3];
-        //     var dice_face = this.getDiceFace( node, 'ctc_dice' );
-
-        //     if ( this.getActivePlayerId() != player_id) {
-        //         return;
-        //     }
-
-        //     if ( this.isCurrentPlayerActive() ) {
-        //         this.ajaxcall( "/phobycatcafe/phobycatcafe/chooseDiceForLocation.html", { lock: true, player_id: player_id, num_player_dice: num_player_dice, dice_face: dice_face }, this, function( result ) {}, function( is_error ) {} );
-        //     }
-        // },
         onClickPlayerDice: function( elmt_id ) {
-            console.log( '$$$$ Event : onClickPlayerDice' );
+            // console.log( '$$$$ Event : onClickPlayerDice' );
             // dojo.stopEvent( evt );
 
             if( ! this.checkAction( 'chooseDiceForLocation' ) )
             { return; }
 
             var node = $(elmt_id);
-            console.log( 'Node : ' + node );
+            // console.log( 'Node : ' + node );
 
             var player_id = elmt_id.split('_')[2];
             var num_player_dice = elmt_id.split('_')[3];
@@ -795,11 +653,9 @@ console.log(column_score_state.players);
 
         onClickSquare: function( node_id )
         {
-            console.log( '$$$$ Event : onClickSquare' );
+            // console.log( '$$$$ Event : onClickSquare' );
             // console.log( evt );
             //dojo.stopEvent( evt );
-
-
 
             if( ! this.checkAction( 'chooseDrawingLocation' ) )
             { return; }
@@ -807,8 +663,8 @@ console.log(column_score_state.players);
             // var node = evt.currentTarget.id;
             // console.log( 'Node : ' + node );
 
-            console.log( "------- conections :");
-            console.log( this.connections );
+            // console.log( "------- conections :");
+            // console.log( this.connections );
 
             var player_id = node_id.split('_')[1];
             var x = node_id.split('_')[2];
@@ -838,7 +694,7 @@ console.log(column_score_state.players);
 
         onClickShape: function( elmt_id )
         {
-            console.log( '$$$$ Event : onClickShape' );
+            // console.log( '$$$$ Event : onClickShape' );
             //dojo.stopEvent( evt );
 
             if( ! this.checkAction( 'chooseShape' ) )
@@ -850,8 +706,8 @@ console.log(column_score_state.players);
             var player_id = elmt_id.split('_')[2];
             var shape = elmt_id.split('_')[3];
 
-            console.log( 'elmt_id : ' + elmt_id );
-            console.log( 'Shape : ' + shape );
+            // console.log( 'elmt_id : ' + elmt_id );
+            // console.log( 'Shape : ' + shape );
 
             if ( this.isCurrentPlayerActive() ) {
                 this.ajaxcall( "/phobycatcafe/phobycatcafe/chooseShape.html", { lock: true, player_id: player_id, shape: shape }, this, function( result ) {}, function( is_error ) {} );
@@ -860,7 +716,7 @@ console.log(column_score_state.players);
 
         onClickCat: function( elmt_id )
         {
-            console.log( '$$$$ Event : onClickCat' );
+            // console.log( '$$$$ Event : onClickCat' );
             // dojo.stopEvent( evt );
 
             if( ! this.checkAction( 'chooseCat' ) )
@@ -888,15 +744,6 @@ console.log(column_score_state.players);
         */
         getXPixelCoordinatesSubScoringColumn: function( i )
         {
-
-            // let offset = this.gameConstants['SUB_SCORING_X_OFFSET'];
-    
-            // if (i == 1) {
-            //     return this.gameConstants['SUB_SCORING_X_ORIGIN'] + (i * (offset + this.gameConstants['SUB_SCORING_WIDTH'])) + 4;
-            // } else {
-            //     return this.gameConstants['SUB_SCORING_X_ORIGIN'] + (i * (offset + this.gameConstants['SUB_SCORING_WIDTH']));
-            // }
-
             let offset = 0;
 
             return this.gameConstants['SCORING_COLUMN_X_ORIGIN'] + (i * this.gameConstants['SCORING_COLUMN_X_OFFSET']);
@@ -1009,19 +856,19 @@ console.log(column_score_state.players);
 
         desableConnections: function()
         {
-            console.log( 'dekonnexx');
-            console.log( this.connections); 
+            // console.log( 'dekonnexx');
+            // console.log( this.connections); 
 
-            dojo.forEach(this.connections, dojo.disconnect);
+            // dojo.forEach(this.connections, dojo.disconnect);
             this.connections = [];            
 
-            console.log( 'dekonnexx after');
-            console.log( this.connections);
+            // console.log( 'dekonnexx after');
+            // console.log( this.connections);
         },
 
         updatePossibleDrawings: function( possibleDrawings )
         {
-            console.log(possibleDrawings);
+            // console.log(possibleDrawings);
 
             for( var player_id in possibleDrawings ) {
                 for( var id in possibleDrawings[player_id] ) {
@@ -1031,56 +878,49 @@ console.log(column_score_state.players);
                     dojo.addClass( 'square_'+player_id+'_'+possibleDrawings[player_id][id].x+'_'+possibleDrawings[player_id][id].y, 'ctc_square_clickable' );
                 }
             }
-
-            // Add events on active elements (the third parameter is the method that will be called when the event defined by the second parameter happens - this method must be declared beforehand)
-            // this.addEventToClass( "ctc_square_clickable", "onclick", "onClickSquare");
         },
 
         updateFootprintsState: function( player_id, used, available ) {
-            console.log( '$$$$ : updateFootprintsState' );
-            console.log( 'player_id : '+player_id );
-            console.log( 'used : '+used );
-            console.log( 'available : '+available );
+            // console.log( '$$$$ : updateFootprintsState' );
+            // console.log( 'player_id : '+player_id );
+            // console.log( 'used : '+used );
+            // console.log( 'available : '+available );
             for (let i=0; i<18; i++) {
                 for (let j=0; j<4; j++) {
                     if (dojo.hasClass($('cat_footprint_'+player_id+'_'+i), 'ctc_cat_footprint_'+j)) {
                         dojo.removeClass($('cat_footprint_'+player_id+'_'+i), 'ctc_cat_footprint_'+j);
                     }
                 }
-                // dojo.removeClass($('cat_footprint_'+player_id+'_'+i), 'ctc_cat_footprint_0');
-                // dojo.removeClass($('cat_footprint_'+player_id+'_'+i), 'ctc_cat_footprint_1');
-                // dojo.removeClass($('cat_footprint_'+player_id+'_'+i), 'ctc_cat_footprint_2');
-                // dojo.removeClass($('cat_footprint_'+player_id+'_'+i), 'ctc_cat_footprint_3');
             }
             for (let i=0; i<used; i++) {
-                console.log( 'i : '+i );
+                // console.log( 'i : '+i );
                 dojo.addClass($('cat_footprint_'+player_id+'_'+i), 'ctc_cat_footprint_2');
             }
             for (let i=used; i<parseInt(used, 10)+parseInt(available, 10); i++) {
-                console.log( 'i : '+i );
+                // console.log( 'i : '+i );
                 dojo.addClass($('cat_footprint_'+player_id+'_'+i), 'ctc_cat_footprint_1');
             }
             for (let i=parseInt(used, 10)+parseInt(available, 10); i<18; i++) {
-                console.log( 'i : '+i );
+                // console.log( 'i : '+i );
                 dojo.addClass($('cat_footprint_'+player_id+'_'+i), 'ctc_cat_footprint_0');
             }
-            console.log( '$$$$ : End updateFootprintsState' );
+            // console.log( '$$$$ : End updateFootprintsState' );
         },
 
         updateFootprintsCounters: function( player_id, used, available ) {
-            console.log( '$$$$ : updateFootprintsState' );
+            // console.log( '$$$$ : updateFootprintsState' );
 
             // Cat footprints on personnal board
             dojo.byId("available_footprint_counter_" + player_id).innerHTML = available;
             dojo.byId("used_footprint_counter_" + player_id).innerHTML = used;
 
-            console.log( '$$$$ : End updateFootprintsState' );
+            // console.log( '$$$$ : End updateFootprintsState' );
         },
 
         setupDices: function( args ) {
-            console.log( '$$$$ : setupDices' );
+            // console.log( '$$$$ : setupDices' );
 
-            console.log(args);
+            // console.log(args);
 
             for( var id in args.dices ) {
                 var dice = args.dices[id];
@@ -1094,138 +934,61 @@ console.log(column_score_state.players);
                     } ), $ ( 'ctc_dice_area' ) );
                 }
             }
-            // let nb_total_dice = 0;
-            // let nb_selected_dice = 0;
-            // let remaining_dice_val = -1;
-            // for( var id in gamedatas.dices )
-            // {
-            //     nb_total_dice++;
-
-            //     var dice = gamedatas.dices[id];
-
-            //     console.log( dice );
-
-            //     if (dice.dice_value !== null) {
-            //         if (dice.player_id === null) {
-            //             remaining_dice_val = dice.dice_value;
-            //             console.log( "face : " + dice.dice_value );
-            //             dojo.place( this.format_block('jstpl_dice', {
-            //                 dice_face:dice.dice_value,
-            //                 id:id,
-            //                 dice:dice.dice_value,
-            //             } ), $ ( 'ctc_dice_area' ) );
-            //         } else {
-            //             // dojo.place( this.format_block('jstpl_dice', {
-            //             //     dice_face:0,
-            //             //     id:id,
-            //             //     dice:dice.dice_value,
-            //             // } ), $ ( 'ctc_dice_area' ) );
-
-            //             nb_selected_dice++;
-            //             dojo.removeClass( 'dice_player_' + dice.player_id + '_0', 'ctc_dice_0' );
-            //             dojo.addClass( 'dice_player_' + dice.player_id + '_0', 'ctc_dice_' + dice.dice_value );
-            //         }
-            //     }
-            // }
         },
 
         updatePlayerSecondDice: function( args ) {
-            console.log( '$$$$ : updatePlayerSecondDice' );
+            // console.log( '$$$$ : updatePlayerSecondDice' );
 
-            console.log(args);
+            // console.log(args);
 
             for( var id in args.playersBasicInfos ) {
-                console.log(id);
-                console.log(args.diceCommon);
-                console.log('dice_'+args.diceCommon['id']+'_'+args.diceCommon['dice_value']);
-
-                // Attempt to create 2 dices and make them slide to the player's dices location
-                // var div = document.getElementById('dice_'+args.diceCommon['id']+'_'+args.diceCommon['dice_value']),
-                // clone = div.cloneNode(true); // true means clone all childNodes and all event handlers
-                // clone.id = 'dice_tmp_'+id;
-                // //document.getElementById('ctc_dice_area').appendChild(clone);
-                // div.appendChild(clone);
-
-                // var slide = this.slideToObject( $( 'dice_tmp_'+id ), $( 'dice_player_' + notif.args.player_id + '_0' ), 1000 );
-                // slide.play();
+                // console.log(id);
+                // console.log(args.diceCommon);
+                // console.log('dice_'+args.diceCommon['id']+'_'+args.diceCommon['dice_value']);
 
                 // Faire poper les des à l'emplacement player -----------------------------------------------------
                 dojo.removeClass($('dice_player_'+id+'_1'), 'ctc_dice_0');
                 dojo.addClass($('dice_player_'+id+'_1'), 'ctc_dice_'+args.diceCommon['dice_value']);
-
-
-
-
-                // let tmp = dojo.clone($('dice_'+args.diceCommon['id']+'_'+args.diceCommon['dice_value']));
-                // //console.log(tmp);
-                // dojo.attr(tmp, 'id', 'dice_tmp_'+id);
-
-
-
-                // var slide = this.slideToObject( $( 'dice_tmp_'+id ), $( 'dice_player_'+id+'_1' ), 1000 );
-                // slide.play();
-
-                // var slide = this.slideToObject( $( 'dice_' + notif.args.dice_id + "_" + notif.args.dice_face ), $( 'dice_player_' + notif.args.player_id + '_0' ), 1000 );
-                // dojo.connect( slide, 'onEnd', this, dojo.hitch( this, function() {
-                //             // At the end of the slide, update the intersection 
-                //             // dojo.removeClass( 'intersection_' + notif.args.coord_x + '_' + notif.args.coord_y, 'no_stone' );
-                //             // dojo.addClass( 'intersection_' + notif.args.coord_x + '_' + notif.args.coord_y, 'stone_'  + notif.args.color );
-                //             // dojo.removeClass( 'intersection_' + notif.args.coord_x + '_' + notif.args.coord_y, 'clickable' );
-                        
-                //             dojo.addClass( 'dice_player_' + notif.args.player_id + '_0', 'ctc_dice_' + notif.args.dice_face );
-
-                //             // We can now destroy the stone since it is now visible through the change in style of the intersection
-                //             dojo.destroy( 'dice_' + notif.args.dice_id + "_" + notif.args.dice_face );
-                // }));
-                // slide.play();
             }
         },
 
         updatePlayerDiceChosen: function( args ) {
-            console.log( '$$$$ : updatePlayerDiceChosen' );
-            //dojo.removeClass($('dice_player_'+player_id+'_'+dice_num), 'ctc_selected');
-            //dojo.addClass($('dice_player_'+player_id+'_'+dice_num), 'ctc_selected');
+            // console.log( '$$$$ : updatePlayerDiceChosen' );
             
-            console.log( "----" );
-            console.log( args );
-            console.log( "----" );
-            //var active_player = args.diceCommon['id']
+            // console.log( "----" );
+            // console.log( args );
+            // console.log( "----" );
 
-            console.log( "++++" );
-            console.log( args['player_id'] );
-            console.log( "++++" );
-
-            // var obj = { color:"#f00" };
-            // dojo.setAttr('dice_player_'+args['player_id']+'_'+args['first_chosen_dice_num'], "style", obj);
+            // console.log( "++++" );
+            // console.log( args['player_id'] );
+            // console.log( "++++" );
 
             dojo.addClass($('dice_player_'+args['player_id']+'_'+args['first_chosen_dice_num']), 'ctc_dice_selected');
 
-            console.log( '$$$$ : End updatePlayerDiceChosen' );
+            // console.log( '$$$$ : End updatePlayerDiceChosen' );
         },
 
         updatePlayerBoardForLocationChoice: function( args ) {
-            console.log( '$$$$ : updatePlayerBoardForLocationChoice' );
-            console.log( args );
+            // console.log( '$$$$ : updatePlayerBoardForLocationChoice' );
+            // console.log( args );
 
             var player_id = args.player_id; 
 
             for (var id in args.possibleLocations[player_id]) {
-                console.log( args.possibleLocations[player_id][id] );
+                // console.log( args.possibleLocations[player_id][id] );
 
                 let x = args.possibleLocations[player_id][id].x;
                 let y = args.possibleLocations[player_id][id].y;
-                // dojo.removeClass($('dice_player_'+id+'_1'), 'ctc_dice_0');
-                
-                //dojo.addClass($('square_'+player_id+'_'+x+'_'+y), 'ctc_square_selectionnable');
+
                 dojo.addClass($('square_'+player_id+'_'+x+'_'+y), 'ctc_square_selectionnable');
             }
 
-            console.log( '$$$$ : End updatePlayerBoardForLocationChoice' );
+            // console.log( '$$$$ : End updatePlayerBoardForLocationChoice' );
         },
 
         updatePlayerBoardForShapeSelection: function( args ) {
-            console.log( '$$$$ : updatePlayerBoardForShapeSelection' );
-            console.log( args );
+            // console.log( '$$$$ : updatePlayerBoardForShapeSelection' );
+            // console.log( args );
 
             let player_id = args.player_id; 
             let min_shape = args.min_shape;
@@ -1235,13 +998,13 @@ console.log(column_score_state.players);
                 dojo.addClass($('shape_selection_'+player_id+'_'+i), 'ctc_shape_selectionnable');
             }
 
-            console.log( '$$$$ : updatePlayerBoardForShapeSelection Ended' );
+            // console.log( '$$$$ : updatePlayerBoardForShapeSelection Ended' );
         },
 
         updatePlayerBoardForCatSelection: function( args ) {
-            console.log( '$$$$ : updatePlayerBoardForCatSelection' );
-            console.log( args );
-            console.log( args.score_cat );
+            // console.log( '$$$$ : updatePlayerBoardForCatSelection' );
+            // console.log( args );
+            // console.log( args.score_cat );
 
             player_id = args.player_id;
 
@@ -1252,21 +1015,17 @@ console.log(column_score_state.players);
                 }
             }
 
-            console.log( '$$$$ : updatePlayerBoardForCatSelection Ended' );
+            // console.log( '$$$$ : updatePlayerBoardForCatSelection Ended' );
         },
 
         cleanBoardForNextRound: function( args ) {
-            console.log( '$$$$ : cleanBoardForNextRound' );
-            console.log( args );
-
-            //////////////////////
-            // var el = document.getElementById('ctc_dice_area');
-            // while ( el.firstChild ) el.removeChild( el.firstChild );
+            // console.log( '$$$$ : cleanBoardForNextRound' );
+            // console.log( args );
 
             var obj = { color:"" };;
 
             for( var id in args.dices ) {
-                console.log(args.dices[id].dice_value);
+                // console.log(args.dices[id].dice_value);
                 if (args.dices[id].player_id > 0) {
                     dojo.removeClass('dice_player_' + args.dices[id].player_id + '_0', 'ctc_dice_' + args.dices[id].dice_value);
 
@@ -1274,7 +1033,7 @@ console.log(column_score_state.players);
                 } else {
                     dojo.destroy( 'dice_' + args.dices[id].id + "_" + args.dices[id].dice_value );
                     for( var id2 in args.players ) {
-                        console.log(args.players[id2]);
+                        // console.log(args.players[id2]);
                         dojo.removeClass('dice_player_' + args.players[id2].id + '_1', 'ctc_dice_' + args.dices[id].dice_value);
 
                         dojo.setAttr('dice_player_'+args.players[id2].id+'_1', "style", obj);
@@ -1288,26 +1047,14 @@ console.log(column_score_state.players);
                 dojo.removeClass('dice_player_' + args.players[id].id + '_1', 'ctc_dice_selected');
             }
 
-            console.log( '$$$$ : cleanBoardForNextRound Ended' );
+            // console.log( '$$$$ : cleanBoardForNextRound Ended' );
         },
 
         setupNewRound: function( args ) {
-            console.log( '$$$$ : setupNewRound' );
-            console.log( args );
+            // console.log( '$$$$ : setupNewRound' );
+            // console.log( args );
 
-            // for( var id in args.dices )
-            // {
-            //     console.log(args.dices[id].dice_value);
-            //     dojo.place( this.format_block('jstpl_dice', {
-            //         dice_face:args.dices[id].dice_value,
-            //         id:args.dices[id].id,
-            //         dice:args.dices[id].dice_value,
-            //     } ), $ ( 'ctc_dice_area' ) );
-            // }
-
-            // this.addEventToClass( "ctc_dice_pickable", "onclick", "onClickDice");
-
-            console.log( '$$$$ : setupNewRound Ended' );
+            // console.log( '$$$$ : setupNewRound Ended' );
         },
 
         getDiceFace: function( node, prefix ) {
@@ -1339,38 +1086,16 @@ console.log(column_score_state.players);
 
         // Remove the shape created for animation
         remove_temp_shape: function(params) {
-            console.log('$$$$ : remove_temp_shape');
+            // console.log('$$$$ : remove_temp_shape');
 
             dojo.removeClass('square_'+params.player_id+'_'+params.x+'_'+params.y, 'ctc_square_selected');
             dojo.addClass('square_'+params.player_id+'_'+params.x+'_'+params.y, 'ctc_square_'+params.shape);
             var elmt_id = 'square_tmp_'+params.x+'_'+params.y;
             dojo.destroy( elmt_id );
 
-            console.log('$$$$ : remove_temp_shape Ended');
+            // console.log('$$$$ : remove_temp_shape Ended');
          },
 
-         /* @Override */
-        // format_string_recursive : function format_string_recursive(log, args) {
-        //     try {
-        //         if (log && args && !args.processed) {
-        //             args.processed = true;
-                    
-
-        //             // list of special keys we want to replace with images
-        //             var keys = ['place_name','token_name'];
-                    
-                  
-        //             for ( var i in keys) {
-        //                 var key = keys[i];
-        //                 key in args && args[key] = this.getTokenDiv(key, args);                            
-
-        //             }
-        //         }
-        //     } catch (e) {
-        //         console.error(log,args,"Exception thrown", e.stack);
-        //     }
-        //     return this.inherited({callee: format_string_recursive}, arguments);
-        // },
 
         /* @Override */
         format_string_recursive: function(log, args) {
@@ -1388,23 +1113,6 @@ console.log(column_score_state.players);
             }
             return this.inherited(arguments);
         },
-
-        // removeClassCatSelectionnable: function() {
-        //     $player_id = this.getActivePlayerId();
-
-        //     for ( var i=0; i<6; i++ ) {
-        //         dojo.removeClass( 'shape_selection_' + player_id + '_'+ (id + 1), 'ctc_cat_selectionnable');
-        //     }
-        // },
-
-        // removeEventFromClass: function( classname, type, functionName ) {
-        //     var elements = document.getElementsByClassName( classname );
-
-        //     for (var i = 0; i < elements.length; i++) {
-        //         elements[i].removeEventListener(type, functionName, false);
-        //     }
-        // },
-
 
         ///////////////////////////////////////////////////
         //// Player's action
@@ -1455,10 +1163,10 @@ console.log(column_score_state.players);
         */
         onPassDrawing: function( evt, args )
         {
-            console.log( 'onPassDrawing' );
-            console.log( '****************' );
-            console.log( args );
-            console.log( '****************' );
+            // console.log( 'onPassDrawing' );
+            // console.log( '****************' );
+            // console.log( args );
+            // console.log( '****************' );
             
             // Preventing default browser reaction
             dojo.stopEvent( evt );
@@ -1486,10 +1194,10 @@ console.log(column_score_state.players);
 
         onCancelLocationDiceChoice: function( evt, args )
         {
-            console.log( 'onCancelLocationDiceChoice' );
-            console.log( '****************' );
-            console.log( args );
-            console.log( '****************' );
+            // console.log( 'onCancelLocationDiceChoice' );
+            // console.log( '****************' );
+            // console.log( args );
+            // console.log( '****************' );
             
             // Preventing default browser reaction
             dojo.stopEvent( evt );
@@ -1517,10 +1225,10 @@ console.log(column_score_state.players);
 
         onCancelLocationChoice: function( evt, args )
         {
-            console.log( 'onCancelLocationChoice' );
-            console.log( '****************' );
-            console.log( args );
-            console.log( '****************' );
+            // console.log( 'onCancelLocationChoice' );
+            // console.log( '****************' );
+            // console.log( args );
+            // console.log( '****************' );
             
             // Preventing default browser reaction
             dojo.stopEvent( evt );
@@ -1548,10 +1256,10 @@ console.log(column_score_state.players);
 
         onCancelShapeChoice: function( evt, args )
         {
-            console.log( 'onCancelShapeChoice' );
-            console.log( '****************' );
-            console.log( args );
-            console.log( '****************' );
+            // console.log( 'onCancelShapeChoice' );
+            // console.log( '****************' );
+            // console.log( args );
+            // console.log( '****************' );
             
             // Preventing default browser reaction
             dojo.stopEvent( evt );
@@ -1591,7 +1299,7 @@ console.log(column_score_state.players);
         */
         setupNotifications: function()
         {
-            console.log( 'notifications subscriptions setup' );
+            // console.log( 'notifications subscriptions setup' );
             
             // TODO: here, associate your game notifications with local methods
             
@@ -1614,9 +1322,6 @@ console.log(column_score_state.players);
             dojo.subscribe( 'catChosen', this, "notif_catChosen" );
             dojo.subscribe( 'columnSubScoringValidated', this, "notif_columnSubScoringValidated" );
             dojo.subscribe( 'columnSubScoringErased', this, "notif_columnSubScoringErased" );
-            // dojo.subscribe( 'columnSubScoringMax', this, "notif_columnSubScoringMax" );
-            // dojo.subscribe( 'columnSubScoringMaxNotAvailable', this, "notif_columnSubScoringMaxNotAvailable" );
-            // dojo.subscribe( 'columnSubScoringMin', this, "notif_columnSubScoringMin" );
             dojo.subscribe( 'score', this, "notif_score" );
             dojo.subscribe( 'backToTurnDrawingPhase1', this, "notif_backToTurnDrawingPhase1" );
         },  
@@ -1639,132 +1344,60 @@ console.log(column_score_state.players);
         */
         notif_dicePicked: function( notif )
         {
-            console.log( '**** Notification : dicePicked' );
-            console.log( notif );
+            // console.log( '**** Notification : dicePicked' );
+            // console.log( notif );
 
-            console.log(notif.args);
+            // console.log(notif.args);
 
             var slide = this.slideToObject( $( 'dice_' + notif.args.dice_id + "_" + notif.args.dice_face ), $( 'dice_player_' + notif.args.player_id + '_0' ), 1000 );
             dojo.connect( slide, 'onEnd', this, dojo.hitch( this, function() {
-                        // At the end of the slide, update the intersection 
-                        // dojo.removeClass( 'intersection_' + notif.args.coord_x + '_' + notif.args.coord_y, 'no_stone' );
-                        // dojo.addClass( 'intersection_' + notif.args.coord_x + '_' + notif.args.coord_y, 'stone_'  + notif.args.color );
-                        // dojo.removeClass( 'intersection_' + notif.args.coord_x + '_' + notif.args.coord_y, 'clickable' );
-        			
-                        dojo.addClass( 'dice_player_' + notif.args.player_id + '_0', 'ctc_dice_' + notif.args.dice_face );
+        			    dojo.addClass( 'dice_player_' + notif.args.player_id + '_0', 'ctc_dice_' + notif.args.dice_face );
 
-                        // We can now destroy the stone since it is now visible through the change in style of the intersection
-                        /////////////////////
                         dojo.destroy( 'dice_' + notif.args.dice_id + "_" + notif.args.dice_face );
-                        //dojo.removeClass('dice_' + notif.args.dice_id + "_" + notif.args.dice_face, 'ctc_dice_' + notif.args.dice_face);
        	    }));
             slide.play();
         },
 
         notif_drawn: function( notif )
         {
-            console.log( '**** Notification : drawn' );
-            console.log( notif );
+            // console.log( '**** Notification : drawn' );
+            // console.log( notif );
 
             dojo.addClass( 'square_' + notif.args.player_id + '_' + notif.args.x +'_' + notif.args.y, 'ctc_square_' + notif.args.shape );
-
-            // var slide = this.slideToObject( $( 'dice_' + notif.args.dice_id + "_" + notif.args.dice_face ), $( 'dice_player_' + notif.args.player_id ), 1000 );
-            // dojo.connect( slide, 'onEnd', this, dojo.hitch( this, function() {
-            //             // At the end of the slide, update the intersection 
-            //             // dojo.removeClass( 'intersection_' + notif.args.coord_x + '_' + notif.args.coord_y, 'no_stone' );
-            //             // dojo.addClass( 'intersection_' + notif.args.coord_x + '_' + notif.args.coord_y, 'stone_'  + notif.args.color );
-            //             // dojo.removeClass( 'intersection_' + notif.args.coord_x + '_' + notif.args.coord_y, 'clickable' );
-        			
-            //             dojo.addClass( 'dice_player_' + notif.args.player_id, 'ctc_dice_' + notif.args.dice_face );
-
-            //             // We can now destroy the stone since it is now visible through the change in style of the intersection
-            //             dojo.destroy( 'dice_' + notif.args.dice_id + "_" + notif.args.dice_face );
-       	    // }));
-            // slide.play();
         },
 
         notif_passed: function( notif )
         {
-            console.log( '**** Notification : passed' );
-            console.log( 'notif : ' );
-            console.log( notif );
+            // console.log( '**** Notification : passed' );
+            // console.log( 'notif : ' );
+            // console.log( notif );
 
             dojo.removeClass('cat_footprint_' + notif.args.player_id + '_' + 0, "ctc_cat_footprint_1");
-
-            // for (let i=0; i<18; i++) {
-            //     let id = 'cat_footprint_' + notif.args.player_id + '_' + notif.args.id;
-            //     var node = dojo.byId(id);
-            //     if (node != null) {
-            //         dojo.removeClass(id, "ctc_cat_footprint_0");
-            //     }
-            // }
 
             this.updateFootprintsState( notif.args.player_id, notif.args.footprint_used, notif.args.footprint_available );
             this.updateFootprintsCounters( notif.args.player_id, notif.args.footprint_used, notif.args.footprint_available );
 
-            console.log( '**** Notification : passed Ended' );
-            // dojo.addClass( 'square_' + notif.args.player_id + '_' + notif.args.x +'_' + notif.args.y, 'ctc_square_' + notif.args.shape );
-
-            // var slide = this.slideToObject( $( 'dice_' + notif.args.dice_id + "_" + notif.args.dice_face ), $( 'dice_player_' + notif.args.player_id ), 1000 );
-            // dojo.connect( slide, 'onEnd', this, dojo.hitch( this, function() {
-            //             // At the end of the slide, update the intersection 
-            //             // dojo.removeClass( 'intersection_' + notif.args.coord_x + '_' + notif.args.coord_y, 'no_stone' );
-            //             // dojo.addClass( 'intersection_' + notif.args.coord_x + '_' + notif.args.coord_y, 'stone_'  + notif.args.color );
-            //             // dojo.removeClass( 'intersection_' + notif.args.coord_x + '_' + notif.args.coord_y, 'clickable' );
-        			
-            //             dojo.addClass( 'dice_player_' + notif.args.player_id, 'ctc_dice_' + notif.args.dice_face );
-
-            //             // We can now destroy the stone since it is now visible through the change in style of the intersection
-            //             dojo.destroy( 'dice_' + notif.args.dice_id + "_" + notif.args.dice_face );
-       	    // }));
-            // slide.play();
+            // console.log( '**** Notification : passed Ended' );
         },
 
         notif_diceForLocationChosen: function( notif )
         {
-            console.log( '**** Notification : diceForLocationChosen' );
-            console.log( 'notif : ' );
-            console.log( notif );
+            // console.log( '**** Notification : diceForLocationChosen' );
+            // console.log( 'notif : ' );
+            // console.log( notif );
 
-            // dojo.removeClass('cat_footprint_' + notif.args.player_id + '_' + 0, "ctc_cat_footprint_1");
-
-            // for (let i=0; i<18; i++) {
-            //     let id = 'cat_footprint_' + notif.args.player_id + '_' + notif.args.id;
-            //     var node = dojo.byId(id);
-            //     if (node != null) {
-            //         dojo.removeClass(id, "ctc_cat_footprint_0");
-            //     }
-            // }
-
-            console.log( notif.args.player_id );
-            console.log( notif.args.first_chosen_dice_num );
-            console.log( notif.args.first_chosen_dice_val );
+            // console.log( notif.args.player_id );
+            // console.log( notif.args.first_chosen_dice_num );
+            // console.log( notif.args.first_chosen_dice_val );
 
             this.updatePlayerDiceChosen( notif.args );
 
-
-
-            console.log( '**** Notification : diceForLocationChosen Ended' );
-            // dojo.addClass( 'square_' + notif.args.player_id + '_' + notif.args.x +'_' + notif.args.y, 'ctc_square_' + notif.args.shape );
-
-            // var slide = this.slideToObject( $( 'dice_' + notif.args.dice_id + "_" + notif.args.dice_face ), $( 'dice_player_' + notif.args.player_id ), 1000 );
-            // dojo.connect( slide, 'onEnd', this, dojo.hitch( this, function() {
-            //             // At the end of the slide, update the intersection 
-            //             // dojo.removeClass( 'intersection_' + notif.args.coord_x + '_' + notif.args.coord_y, 'no_stone' );
-            //             // dojo.addClass( 'intersection_' + notif.args.coord_x + '_' + notif.args.coord_y, 'stone_'  + notif.args.color );
-            //             // dojo.removeClass( 'intersection_' + notif.args.coord_x + '_' + notif.args.coord_y, 'clickable' );
-        			
-            //             dojo.addClass( 'dice_player_' + notif.args.player_id, 'ctc_dice_' + notif.args.dice_face );
-
-            //             // We can now destroy the stone since it is now visible through the change in style of the intersection
-            //             dojo.destroy( 'dice_' + notif.args.dice_id + "_" + notif.args.dice_face );
-       	    // }));
-            // slide.play();
+            // console.log( '**** Notification : diceForLocationChosen Ended' );
         },
 
         notif_drawingLocationChosen: function( notif )
         {
-            console.log( '**** Notification : drawingLocationChosen' );
+            // console.log( '**** Notification : drawingLocationChosen' );
 
             let player_id = notif.args.player_id;
             let x = notif.args.x;
@@ -1772,24 +1405,16 @@ console.log(column_score_state.players);
 
             this.updateFootprintsState( notif.args.player_id, notif.args.footprint_used, notif.args.footprint_available );
             this.updateFootprintsCounters( notif.args.player_id, notif.args.footprint_used, notif.args.footprint_available );
-            
-            // for (let i=0; i<5; i++) {
-            //     for (let j=0; j<6; j++) {
-            //         var elem = dojo.byId('square_'+player_id+'_'+i+'_'+j);
-            //         if (elem != null) {
-            //             dojo.removeClass('square_'+player_id+'_'+i+'_'+j, 'ctc_square_selectionnable');
-            //         }
-            //     }
-            // }
+
             dojo.removeClass('square_'+player_id+'_'+x+'_'+y, 'ctc_square_0');
             dojo.addClass('square_'+player_id+'_'+x+'_'+y, 'ctc_square_selected');
 
-            console.log( '**** Notification : drawingLocationChosen Ended' );
+            // console.log( '**** Notification : drawingLocationChosen Ended' );
         },
 
         notif_shapeChosen: function( notif )
         {
-            console.log( '**** Notification : shapeChosen' );
+            // console.log( '**** Notification : shapeChosen' );
 
             let player_id = notif.args.player_id;
             let x = notif.args.x;
@@ -1817,21 +1442,12 @@ console.log(column_score_state.players);
             dojo.connect(animation_id, 'onEnd', dojo.hitch(this, 'remove_temp_shape', parameters));
             animation_id.play();
 
-
-
-            // dojo.removeClass('square_'+player_id+'_'+x+'_'+y, 'ctc_square_selected');
-            // dojo.addClass('square_'+player_id+'_'+x+'_'+y, 'ctc_square_'+shape);
-
-            // for (let i=1; i<=6; i++) {
-            //     dojo.removeClass('shape_selection_'+player_id+'_'+i, 'ctc_shape_selectionnable');
-            // }
-
-            console.log( '**** Notification : shapeChosen Ended' );
+            // console.log( '**** Notification : shapeChosen Ended' );
         },
 
         notif_catChosen: function( notif )
         {
-            console.log( '**** Notification : catChosen' );
+            // console.log( '**** Notification : catChosen' );
 
             let player_id = notif.args.player_id;
             let x = notif.args.x;
@@ -1845,12 +1461,12 @@ console.log(column_score_state.players);
                 dojo.removeClass('cat_selection_'+player_id+'_'+i, 'ctc_cat_selectionnable');
             }
 
-            console.log( '**** Notification : catChosen Ended' );
+            // console.log( '**** Notification : catChosen Ended' );
         },
 
         notif_columnSubScoringMax: function( notif )
         {
-            console.log( '**** Notification : columnSubScoringMax' );
+            // console.log( '**** Notification : columnSubScoringMax' );
 
             let player_id = notif.args.player_id;
             let column_number = notif.args.column_number;
@@ -1869,12 +1485,12 @@ console.log(column_score_state.players);
                 }
             }
 
-            console.log( '**** Notification : columnSubScoringMax Ended' );
+            // console.log( '**** Notification : columnSubScoringMax Ended' );
         },
 
         notif_columnSubScoringMaxNotAvailable: function( notif )
         {
-            console.log( '**** Notification : columnSubScoringMaxNotAvailable' );
+            // console.log( '**** Notification : columnSubScoringMaxNotAvailable' );
 
             let player_id = notif.args.player_id;
             let column_number = notif.args.column_number;
@@ -1890,12 +1506,12 @@ console.log(column_score_state.players);
                 }
             }
 
-            console.log( '**** Notification : columnSubScoringMaxNotAvailable Ended' );
+            // console.log( '**** Notification : columnSubScoringMaxNotAvailable Ended' );
         },
 
         notif_columnSubScoringValidated: function( notif )
         {
-            console.log( '**** Notification : columnSubScoringValidated' );
+            // console.log( '**** Notification : columnSubScoringValidated' );
 
             params = notif.args.params;
 
@@ -1908,12 +1524,12 @@ console.log(column_score_state.players);
                 dojo.addClass('sub_scoring_'+player_id+'_'+column_number+'_'+score_number, 'ctc_column_scoring_validated');
             }
 
-            console.log( '**** Notification : columnSubScoringValidated Ended' );
+            // console.log( '**** Notification : columnSubScoringValidated Ended' );
         },
 
         notif_columnSubScoringErased: function( notif )
         {
-            console.log( '**** Notification : columnSubScoringErased' );
+            // console.log( '**** Notification : columnSubScoringErased' );
 
             params = notif.args.params;
             
@@ -1926,12 +1542,12 @@ console.log(column_score_state.players);
                 dojo.addClass('sub_scoring_'+player_id+'_'+column_number+'_'+score_number, 'ctc_column_scoring_erased');
             }
 
-            console.log( '**** Notification : columnSubScoringErased Ended' );
+            // console.log( '**** Notification : columnSubScoringErased Ended' );
         },
 
         notif_columnSubScoringMin: function( notif )
         {
-            console.log( '**** Notification : columnSubScoringMin' );
+            // console.log( '**** Notification : columnSubScoringMin' );
 
             let player_id = notif.args.player_id;
             let column_number = notif.args.column_number;
@@ -1939,7 +1555,7 @@ console.log(column_score_state.players);
             
             dojo.addClass('sub_scoring_'+player_id+'_'+column_number+'_1', 'ctc_column_scoring_validated');
 
-            console.log( '**** Notification : columnSubScoringMin Ended' );
+            // console.log( '**** Notification : columnSubScoringMin Ended' );
         },
 
         notif_score: function( notif ) {
@@ -1947,28 +1563,28 @@ console.log(column_score_state.players);
         },
 
         notif_backToTurnDrawingPhase1: function( notif ) {
-            console.log( '**** Notification : backToTurnDrawingPhase1' );
+            // console.log( '**** Notification : backToTurnDrawingPhase1' );
 
             let player_id = notif.args.player_id;
 
             for (var i=0; i<2; i++) {
                 let elmt_id = 'dice_player_'+player_id+'_'+i;
 
-                console.log( dojo.style(elmt_id, 'color') );
+                // console.log( dojo.style(elmt_id, 'color') );
                 dojo.style(elmt_id, 'color', 'rgb(0, 0, 0)');
             }
 
             let x = notif.args.x;
             let y = notif.args.y;
 
-            console.log( '---------- x='+x+', y='+y+' -------------' );
+            // console.log( '---------- x='+x+', y='+y+' -------------' );
 
             if (x >= 0 && y >= 0) {
                 let elmt_id = 'square_'+player_id+'_'+x+'_'+y;
                 for (var i=1; i<7; i++) {
                     dojo.removeClass(elmt_id, 'ctc_square_'+i);
 
-                    console.log( 'ctc_square_'+i );
+                    // console.log( 'ctc_square_'+i );
                 }
                 dojo.removeClass(elmt_id, 'ctc_square_selected');
                 
@@ -1989,7 +1605,7 @@ console.log(column_score_state.players);
             this.updateFootprintsState( notif.args.player_id, notif.args.footprint_used, notif.args.footprint_available );
             this.updateFootprintsCounters( notif.args.player_id, notif.args.footprint_used, notif.args.footprint_available );
 
-            console.log( '**** Notification : backToTurnDrawingPhase1 Ended' );
+            // console.looog( '**** Notification : backToTurnDrawingPhase1 Ended' );
         },
    });             
 });

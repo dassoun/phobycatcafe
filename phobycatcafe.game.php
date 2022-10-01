@@ -118,17 +118,6 @@ class phobycatcafe extends Table
         $sql .= implode( $values, ',' );
         self::DbQuery( $sql );
 
-        // $values = array();
-        // for ($i=0; $i<=count($players); $i++) {
-        //     $values[] = "(".($i + 1).", ".bga_rand(1, 6).")";
-        // }
-
-        // $sql = "INSERT INTO dice (id, dice_value) VALUES ";
-        // $sql .= implode( $values, ',' );
-        // self::DbQuery( $sql );
-
-        //var_dump($players);
-
         $this->rollDices();
 
         // Activate first player (which is in general a good idea :) )
@@ -176,9 +165,6 @@ class phobycatcafe extends Table
         foreach ($player_grid as $square) {
             $result['drawings'][$square['player_id']][] = new CTCSquare($square['coord_x'], $square['coord_y'], $square['state']);
         }
-
-        // $result['drawings'] = self::getObjectListFromDB($sql);
-
 
         $sql = "SELECT id, dice_value, player_id FROM dice ORDER BY id ASC";
         $result['dices'] = self::getCollectionFromDb( $sql );
@@ -352,7 +338,7 @@ class phobycatcafe extends Table
         $sql = "SELECT coord_x, coord_y, state FROM drawing WHERE player_id = '$player_id' ORDER BY coord_x, coord_y";
         $player_grid = self::getDoubleKeyCollectionFromDB( $sql, true );
 
-        self::dump( "grille", $player_grid );
+        // self::dump( "grille", $player_grid );
 
         $nb_shape = 0;
 
@@ -364,7 +350,7 @@ class phobycatcafe extends Table
             }
         }
 
-        self::dump( "getCatHouseScore : ", $nb_shape * 2 );
+        // self::dump( "getCatHouseScore : ", $nb_shape * 2 );
         return ($nb_shape * 2);
     }
 
@@ -373,18 +359,18 @@ class phobycatcafe extends Table
         $sql = "SELECT (score_cat_1 + score_cat_2 + score_cat_3 + score_cat_4 + score_cat_5 + score_cat_6) FROM player WHERE player_id = '$player_id'";
         $cat_house_score = self::getUniqueValueFromDB( $sql );
 
-        self::dump( "getCatHouseScoreTotal : ", $cat_house_score );
+        // self::dump( "getCatHouseScoreTotal : ", $cat_house_score );
         return ($cat_house_score);
     }
 
     function getBallOfYarnScore($player_id) {
         
-        self::debug( "+++++++++++++++++ getBallOfYarnScore" );
+        // self::debug( "+++++++++++++++++ getBallOfYarnScore" );
 
         $sql = "SELECT player_id id FROM player";
         $players = self::getObjectListFromDB( $sql );
 
-        self::dump( "players : ", $players );
+        // self::dump( "players : ", $players );
 
         $ball_of_yarn = array();
         $max = array(0, 0, 0, 0, 0);
@@ -394,12 +380,12 @@ class phobycatcafe extends Table
             $sql = "SELECT coord_x, coord_y, state FROM drawing WHERE player_id = '".$player_info["id"]."' ORDER BY coord_x, coord_y";
             $player_grid = self::getDoubleKeyCollectionFromDB( $sql, true );
 
-            self::dump( "value[\"id\"] : ", $player_info["id"] );
+            // self::dump( "value[\"id\"] : ", $player_info["id"] );
 
             $ball_of_yarn[$player_info["id"]] = array(0, 0, 0, 0, 0);
 
-            self::debug( "--------------------------------------------" );
-            self::dump( "player_grid : ", $player_grid );
+            // self::debug( "--------------------------------------------" );
+            // self::dump( "player_grid : ", $player_grid );
 
             foreach($player_grid as $x => $value) {
                 $count = 0;
@@ -407,7 +393,7 @@ class phobycatcafe extends Table
                 foreach($value as $y => $value2) {
                     if ($value2 == $this->gameConstants["SHAPE_BALL_OF_YARN"]) {
 
-                        self::debug( "x : ".$x.", y : ".$y." / value2 : ".$value2 );
+                        // self::debug( "x : ".$x.", y : ".$y." / value2 : ".$value2 );
 
                         $count++;
                     }
@@ -427,8 +413,8 @@ class phobycatcafe extends Table
             }
         }
 
-        self::dump( "ball_of_yarn : ", $ball_of_yarn );
-        self::dump( "max : ", $max );
+        // self::dump( "ball_of_yarn : ", $ball_of_yarn );
+        // self::dump( "max : ", $max );
 
         $res = 0;
 
@@ -442,7 +428,7 @@ class phobycatcafe extends Table
             }
         }
 
-        self::dump( "res : ", $res );
+        // self::dump( "res : ", $res );
 
         return $res;
     }
@@ -462,7 +448,7 @@ class phobycatcafe extends Table
             }
         }
 
-        self::dump( "getButterflyToyScore : ", $nb_butterfly_toy * 3 );
+        // self::dump( "getButterflyToyScore : ", $nb_butterfly_toy * 3 );
 
         return ($nb_butterfly_toy * 3);
     }
@@ -474,8 +460,8 @@ class phobycatcafe extends Table
 
         $food_bowl_score = 0;
 
-        self::debug( "+++++++++++++++++++++++++++++++ getFoodBowlScore" );
-        self::dump( "player_grid", $player_grid );
+        // self::debug( "+++++++++++++++++++++++++++++++ getFoodBowlScore" );
+        // self::dump( "player_grid", $player_grid );
 
         foreach($player_grid as $x => $value) {
             foreach($value as $y => $value2) {
@@ -483,16 +469,6 @@ class phobycatcafe extends Table
                     $food_bowl_array = array(0, 0, 0, 0, 0, 0);
 
                     $nb_shape = 0;
-
-                    // self::debug( "x : ".$x.", y: ".$y );
-
-                    // self::dump( "player_grid x", $player_grid[$x] );
-
-                    // if (array_key_exists(($y-1), $player_grid[$x])) {
-                    //     self::debug( "x : ".$x.", y: ".$y." exists !" );
-                    // } else {
-                    //     self::debug( "x : ".$x.", y: ".$y." does not exist !" );
-                    // }
 
                     // column x
                     if (array_key_exists(($y-1), $player_grid[$x])) {
@@ -566,72 +542,6 @@ class phobycatcafe extends Table
             }
         }
 
-        // self::dump( "food_bowl_score", $food_bowl_score );
-
-        // $food_bowl_array = array(0, 0, 0, 0, 0, 0);
-
-        // $nb_shape = 0;
-
-        // // column x
-        // if (array_key_exists($x, $player_grid)) {
-        //     if (array_key_exists(($y-1), $player_grid[$x])) {
-        //         $shape = $player_grid[$x][$y-1];
-        //         $food_bowl_array[$shape - 1] = 1;
-        //     }
-        //     if (array_key_exists(($y+1), $player_grid[$x])) {
-        //         if ($player_grid[$x][$y+1] == $cat) {
-        //             $shape = $player_grid[$x][$y+1];
-        //             $food_bowl_array[$shape - 1] = 1;
-        //         }
-        //     }
-        // }
-
-        // if (($x % 2) == 0) {
-        //     // column x-1
-        //     for ($i=0; $i<2; $i++) {
-        //         if (array_key_exists($x-1, $player_grid)) {
-        //             if (array_key_exists(($y+$i), $player_grid[$x-1])) {
-        //                 $shape = $player_grid[$x-1][$y+$i];
-        //                 $food_bowl_array[$shape - 1] = 1;
-        //             }
-        //         }
-        //     }
-        //     // column x+1
-        //     for ($i=0; $i<2; $i++) {
-        //         if (array_key_exists($x+1, $player_grid)) {
-        //             if (array_key_exists(($y+$i), $player_grid[$x+1])) {
-        //                 $shape = $player_grid[$x+1][$y+$i];
-        //                 $food_bowl_array[$shape - 1] = 1;
-        //             }
-        //         }
-        //     }
-        // } else {
-        //     // column x-1
-        //     for ($i=-1; $i<1; $i++) {
-        //         if (array_key_exists($x-1, $player_grid)) {
-        //             if (array_key_exists(($y+$i), $player_grid[$x-1])) {
-        //                 $shape = $player_grid[$x-1][$y+$i];
-        //                 $food_bowl_array[$shape - 1] = 1;
-        //             }
-        //         }
-        //     }
-        //     // column x+1
-        //     for ($i=-1; $i<1; $i++) {
-        //         if (array_key_exists($x+1, $player_grid)) {
-        //             if (array_key_exists(($y+$i), $player_grid[$x+1])) {
-        //                 $shape = $player_grid[$x+1][$y+$i];
-        //                 $food_bowl_array[$shape - 1] = 1;
-        //             }
-        //         }
-        //     }
-        // }
-
-        // $food_bowl_score = 0;
-
-        // foreach($food_bowl_array as $value) {
-        //     $food_bowl_score += $value;
-        // }
-
         return $food_bowl_score;
     }
 
@@ -640,7 +550,7 @@ class phobycatcafe extends Table
         $sql = "SELECT coord_x, coord_y, state FROM drawing WHERE player_id = '$player_id' ORDER BY coord_x, coord_y";
         $player_grid = self::getDoubleKeyCollectionFromDB( $sql, true );
 
-        self::dump( "grille", $player_grid );
+        // self::dump( "grille", $player_grid );
 
         $cushion_score = 0;
 
@@ -652,7 +562,7 @@ class phobycatcafe extends Table
             }
         }
 
-        self::dump( "cushion_score", $cushion_score );
+        // self::dump( "cushion_score", $cushion_score );
         return ($cushion_score);
     }
 
@@ -661,10 +571,7 @@ class phobycatcafe extends Table
         $sql = "SELECT coord_x, coord_y, state FROM drawing WHERE player_id = '$player_id' ORDER BY coord_x, coord_y";
         $player_grid = self::getDoubleKeyCollectionFromDB( $sql, true );
 
-        self::dump( "grille", $player_grid );
-
-        // state == $this->gameConstants["SHAPE_MOUSE_TOY"];
-        // $this->gameConstants["SHAPE_MOUSE_TOY"]
+        // self::dump( "grille", $player_grid );
 
         $mice_score_calculation_tmp = array();
         for ($i=0; $i<5; $i++) {
@@ -673,7 +580,7 @@ class phobycatcafe extends Table
             }
         }
 
-        self::dump( "grille json : ", json_encode($mice_score_calculation_tmp));
+        // self::dump( "grille json : ", json_encode($mice_score_calculation_tmp));
 
         $connected_mice_score = array();
 
@@ -683,7 +590,7 @@ class phobycatcafe extends Table
                     if ($player_grid[$x][$y] == $this->gameConstants["SHAPE_MOUSE_TOY"]) {
                         $connected_mice = 0;
                         $connected_mice = $this->getConnectedMice($player_grid, $x, $y, $mice_score_calculation_tmp);
-                        self::dump( "connected mice score : ", json_encode($connected_mice));
+                        // self::dump( "connected mice score : ", json_encode($connected_mice));
                         if ($connected_mice > 0) {
                             $connected_mice_score[] = $connected_mice;
                         }
@@ -691,59 +598,48 @@ class phobycatcafe extends Table
                         $mice_score_calculation_tmp[$x][$y] = "done";
                     }
                 } else {
-                    self::dump( "key not exists : x = $x, y = $y", "+++++++++++++++++++++++++++");
+                    // self::dump( "key not exists : x = $x, y = $y", "+++++++++++++++++++++++++++");
                 }
             }
         }
 
-        self::dump( "mice tmp : ", json_encode($mice_score_calculation_tmp));
+        // self::dump( "mice tmp : ", json_encode($mice_score_calculation_tmp));
 
-        self::dump( "mice score : ", json_encode($connected_mice_score));
+        // self::dump( "mice score : ", json_encode($connected_mice_score));
 
 
         $mice_score = 0;
 
         foreach($connected_mice_score as $nb_mice) {
-            self::dump( "nb_mice : $nb_mice", "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
             $mod_chain_of_4 = floor($nb_mice / 4);
-            self::dump( "mod_chain_of_4 : $mod_chain_of_4", "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
             $rest = $nb_mice % 4;
-            self::dump( "rest : $rest", "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
             
             $mice_score += $this->gameConstants["CONNECTED_MICE_POINTS"][3] * $mod_chain_of_4;
             if ($rest > 0) {
                 $mice_score += $this->gameConstants["CONNECTED_MICE_POINTS"][$rest - 1];
             }
-
-            self::dump( "tmp mice score $nb_mice : $mice_score", "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
         }
 
-        self::dump( "final mice score : ", json_encode($mice_score));
+        // self::dump( "final mice score : ", json_encode($mice_score));
         return $mice_score;
     }
 
     function getConnectedMice(&$grid, $x, $y, &$mice_score_calculation_tmp) {
 
         $score = 0;
-        self::dump( "getConnectedMice : x = $x, y = $y", "***");
+        // self::dump( "getConnectedMice : x = $x, y = $y", "***");
 
-        // if (is_null($grid) || !isset($grid[$x]) || !isset($grid[$x][$y])) {
         if (!isset($grid[$x][$y])) {
-            // self::dump( "grille : ", array_key_exists($x, $grid));
-            self::dump( "A", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! $score");
             return 0;
         }
 
         if ($mice_score_calculation_tmp[$x][$y] == "done") {
-            self::dump( "B", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! $score");
             return 0;
         } else {
-            self::dump( "C", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! $score");
             $mice_score_calculation_tmp[$x][$y] = "done";
         }
 
         if ($grid[$x][$y] == $this->gameConstants["SHAPE_MOUSE_TOY"]) {
-            self::dump( "D", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! $score");
             $score = 1;
 
             // column x
@@ -827,7 +723,7 @@ class phobycatcafe extends Table
             }
         }
 
-        self::dump("column_score_state / global", $column_score_state["global"]);
+        // self::dump("column_score_state / global", $column_score_state["global"]);
 
         foreach ( $player_score_col as $player_id => $score_col ) {
             for ( $i=0; $i<5; $i++ ) {
@@ -882,10 +778,6 @@ class phobycatcafe extends Table
             'dice_id' => $dice_id,
             'dice_face' => $dice_face,
             'ctc_log_dice' => $dice_face
-            // 'coord_x' => $coord_x,
-            // 'coord_y' => $coord_y,
-            // 'color' => $color,
-            // 'counters' => $this->getGameCounters(self::getCurrentPlayerId()
             )
         );
 
@@ -912,10 +804,6 @@ class phobycatcafe extends Table
             'player_id' => $player_id,
             'x' => $x,
             'y' => $y
-            // 'coord_x' => $coord_x,
-            // 'coord_y' => $coord_y,
-            // 'color' => $color,
-            // 'counters' => $this->getGameCounters(self::getCurrentPlayerId()
             )
         );
 
@@ -945,12 +833,7 @@ class phobycatcafe extends Table
             'player_id' => $player_id,
             'player_name' => self::getActivePlayerName(),
             'footprint_available' => $footprint_available,
-            'footprint_used' => $footprint_used,
-
-            // 'coord_x' => $coord_x,
-            // 'coord_y' => $coord_y,
-            // 'color' => $color,
-            // 'counters' => $this->getGameCounters(self::getCurrentPlayerId()
+            'footprint_used' => $footprint_used
             )
         );
 
@@ -965,15 +848,7 @@ class phobycatcafe extends Table
         
     }
 
-    // function selectDiceForLocation( $player_id ) {
-    //     // Check that this is player's turn and that it is a "possible action" at this game state (see states.inc.php)
-    //     self::checkAction( 'chooseDiceForLocation' ); 
-
-    //     $player_id = self::getActivePlayerId();
-    // }
-
     function chooseDiceForLocation( $player_id, $num_player_dice, $player_dice_face ) {
-        //var_dump($player_dice_face);
 
         // Check that this is player's turn and that it is a "possible action" at this game state (see states.inc.php)
         self::checkAction( 'chooseDiceForLocation' ); 
@@ -1001,10 +876,6 @@ class phobycatcafe extends Table
                 self::DbQuery($sql);
             }
         }
-
-        // // Update player dice
-        // $sql = "UPDATE player SET first_chosen_dice_num = $num_player_dice, first_chosen_dice_val = $player_dice_face WHERE player_id = '$player_id'";
-        // self::DbQuery($sql);
 
         // Notify all players
         self::notifyAllPlayers( "diceForLocationChosen", clienttranslate( '${player_name} has chosen his first dice' ), array(
@@ -1034,8 +905,6 @@ class phobycatcafe extends Table
             'player_name' => self::getActivePlayerName(),
             'x' => -1,
             'y' => -1
-            // 'first_chosen_dice_num' => $num_player_dice,
-            // 'first_chosen_dice_val' => $player_dice_face,
             )
         );
 
@@ -1079,8 +948,6 @@ class phobycatcafe extends Table
             'y' => $locations[1],
             'footprint_available' => $footprint_available,
             'footprint_used' => $footprint_used
-            // 'first_chosen_dice_num' => $num_player_dice,
-            // 'first_chosen_dice_val' => $player_dice_face,
             )
         );
 
@@ -1124,8 +991,6 @@ class phobycatcafe extends Table
             'y' => $locations[1],
             'footprint_available' => $footprint_available,
             'footprint_used' => $footprint_used
-            // 'first_chosen_dice_num' => $num_player_dice,
-            // 'first_chosen_dice_val' => $player_dice_face,
             )
         );
         
@@ -1136,10 +1001,10 @@ class phobycatcafe extends Table
     function chooseDrawingLocation( $player_id, $x, $y ) {
         self::checkAction( 'chooseDrawingLocation' ); 
 
-        self::trace( 'chooseDrawingLocation' ); 
-        self::dump( 'player_id', $player_id );
-        self::dump( 'x', $x );
-        self::dump( 'y', $y );
+        // self::trace( 'chooseDrawingLocation' ); 
+        // self::dump( 'player_id', $player_id );
+        // self::dump( 'x', $x );
+        // self::dump( 'y', $y );
 
         $player_id = self::getActivePlayerId();
 
@@ -1263,19 +1128,6 @@ class phobycatcafe extends Table
             )
         );
 
-        // Go to next game state
-        // if ($shape == 1) {
-        //     $this->gamestate->nextState( "chooseCat" );
-        // } else {
-        //     $sql = "SELECT COUNT(*) AS nb FROM player WHERE has_passed = true OR (first_chosen_played_order IS NOT NULL AND second_chosen_played_order IS NOT NULL)";
-        //     $res = self::getObjectFromDB( $sql );
-        //     if ($res['nb'] < (self::getPlayersNumber())) {
-        //         $this->gamestate->nextState( "shapeChosen" );
-        //     } else {
-        //         $this->gamestate->nextState( "nextRound" );
-        //     }
-        // }
-
         if ($shape == $this->gameConstants["SHAPE_CAT_HOUSE"]) {
             $this->gamestate->nextState( "chooseCat" );
         } else {
@@ -1314,14 +1166,6 @@ class phobycatcafe extends Table
             'score_cat' => $score_cat
             )
         );
-
-        // $sql = "SELECT COUNT(*) AS nb FROM player WHERE has_passed = true OR (first_chosen_played_order IS NOT NULL AND second_chosen_played_order IS NOT NULL)";
-        // $res = self::getObjectFromDB( $sql );
-        // if ($res['nb'] < (self::getPlayersNumber())) {
-        //     $this->gamestate->nextState( "catChosen" );
-        // } else {
-        //     $this->gamestate->nextState( "nextRound" );
-        // }
 
         $this->gamestate->nextState( "catChosen" );
     }
@@ -1417,15 +1261,6 @@ class phobycatcafe extends Table
 
         $player_id = self::getActivePlayerId();
 
-        // $sql = "SELECT dice_value FROM dice WHERE player_id = '$player_id'";
-        // $dice_1 = self::getObjectFromDb( $sql );
-
-        // $sql = "SELECT dice_value FROM dice WHERE player_id is null";
-        // $dice_2 = self::getObjectFromDb( $sql );
-
-        // Selected dice for drawing
-        // $sql = "SELECT first_chosen_dice_val FROM player WHERE player_id = '$player_id' ";
-        // $selected_dice = self::getUniqueValueFromDB( $sql );
         $sql = "SELECT footprint_available, first_chosen_dice_num, first_chosen_dice_val, first_chosen_played_order, second_chosen_dice_num, second_chosen_dice_val, second_chosen_played_order FROM player WHERE player_id = '$player_id'";
         $res = self::getObjectFromDb( $sql );
 
@@ -1471,7 +1306,7 @@ class phobycatcafe extends Table
         $sql = "SELECT footprint_available, first_chosen_dice_num, first_chosen_dice_val, first_chosen_played_order, second_chosen_dice_num, second_chosen_dice_val, second_chosen_played_order FROM player WHERE player_id = '$player_id'";
         $res = self::getObjectFromDb( $sql );
 
-        self::dump('res', $res);
+        // self::dump('res', $res);
 
         $footprint_available = $res['footprint_available'];
         $first_chosen_dice_num = $res['first_chosen_dice_num'];
@@ -1497,7 +1332,7 @@ class phobycatcafe extends Table
         $res['min_shape'] = $min_shape;
         $res['max_shape'] = $max_shape;
 
-        self::dump('res', $res);
+        // self::dump('res', $res);
 
         return $res;
     }
@@ -1592,7 +1427,7 @@ class phobycatcafe extends Table
 
     function stRollDices()
     {
-        self::trace( "stRollDices" );
+        // self::trace( "stRollDices" );
 
         // Renew dices
         $sql = "DELETE FROM dice WHERE 1 = 1";
@@ -1613,14 +1448,14 @@ class phobycatcafe extends Table
 
     function stSetupDices()
     {
-        self::trace( "stSetupDices" );
+        // self::trace( "stSetupDices" );
 
         $this->gamestate->nextState("");
     }
 
     function stNextPlayerPicking()
     {
-    	self::trace( "stNextPlayerPicking" );
+    	// self::trace( "stNextPlayerPicking" );
     	 
     	// Go to next player
     	$active_player = self::activeNextPlayer();
@@ -1647,7 +1482,7 @@ class phobycatcafe extends Table
 
     function stEndPlayerTurn()
     {
-        self::trace( "stEndPlayerTurn" );
+        // self::trace( "stEndPlayerTurn" );
 
         $sql = "SELECT COUNT(*) AS nb FROM player WHERE has_passed = true OR (first_chosen_played_order IS NOT NULL AND second_chosen_played_order IS NOT NULL)";
         $res = self::getObjectFromDB( $sql );
@@ -1661,14 +1496,10 @@ class phobycatcafe extends Table
     // Check columns scoring
     function stColumnScoring()
     {
-        self::trace( "stColumnScoring" );
+        // self::trace( "stColumnScoring" );
 
         // Initial state of column score, before this ans of round calculation
         $initial_column_score_state = $this->getColumnScoreState();
-
-        /////////////////////////////////////////////////////////////////////////
-        // Calculation of the new state of column score
-        /////////////////////////////////////////////////////////////////////////
 
         // Column score by player
         $sql = "SELECT player_id, score_col_1, score_col_2, score_col_3, score_col_4, score_col_5 FROM player";
@@ -1676,11 +1507,11 @@ class phobycatcafe extends Table
 
         $boards = self::getPlayerBoards();
 
-        self::dump( 'player_score_col', $player_score_col );
+        // self::dump( 'player_score_col', $player_score_col );
 
         foreach ( $boards as $player_id => $board ) {
             for ( $i=0; $i<5; $i++ ) {
-                self::dump( 'boards ------------- ', $player_score_col[$player_id]["score_col_".($i+1)] );
+                // self::dump( 'boards ------------- ', $player_score_col[$player_id]["score_col_".($i+1)] );
                 if ( $player_score_col[$player_id]["score_col_".($i+1)] == 0) {
                     // is there a cat house in the column ?
                     $cat_house_in_col = false;
@@ -1707,13 +1538,13 @@ class phobycatcafe extends Table
 
                         // We can score the highest only if we have a cat house in the column, and the column not not already be filled by anyone
                         if ( $cat_house_in_col && $initial_column_score_state["global"][$i] == 0 ) {
-                            self::trace( "!!!!!!!!!!!!!!!!!!!!! $player_id / $i MAX" );
+                            // self::trace( "!!!!!!!!!!!!!!!!!!!!! $player_id / $i MAX" );
 
                             $sql = "UPDATE player SET score_col_".($i+1)." = ".$this->gameConstants["COL_SUB_SCORING_COL_MAX"][$i]." WHERE player_id = '$player_id'";
                             self::DbQuery($sql);
 
                         } else {
-                            self::trace( "!!!!!!!!!!!!!!!!!!!!! $player_id / $i MIN" );
+                            // self::trace( "!!!!!!!!!!!!!!!!!!!!! $player_id / $i MIN" );
 
                             $sql = "UPDATE player SET score_col_".($i+1)." = ".$this->gameConstants["COL_SUB_SCORING_COL_MIN"][$i]." WHERE player_id = '$player_id'";
                             self::DbQuery($sql);
@@ -1762,22 +1593,22 @@ class phobycatcafe extends Table
         // self::dump( 'initial_column_score_state', $initial_column_score_state["players"] );
         // self::dump( 'new_column_score_state', $new_column_score_state["players"] );
 
-        self::dump( 'notify_validated_col', $notify_validated_col );
-        self::dump( 'notify_erased_col', $notify_erased_col );
+        // self::dump( 'notify_validated_col', $notify_validated_col );
+        // self::dump( 'notify_erased_col', $notify_erased_col );
 
         $this->gamestate->nextState("");
     }
 
     function stSetupDrawing()
     {
-        self::trace( "stSetupDrawing" );
+        // self::trace( "stSetupDrawing" );
 
         $this->gamestate->nextState("");
     }
 
     function stNextPlayerDrawing()
     {
-    	self::trace( "stNextPlayerDrawing" );
+    	// self::trace( "stNextPlayerDrawing" );
     	
         $active_player_id = self::getActivePlayerId();
         $sql = "UPDATE player SET location_chosen = null WHERE player_id = '$active_player_id'";
@@ -1794,7 +1625,7 @@ class phobycatcafe extends Table
 
     function stNextRound()
     {
-        self::trace( "stNextRound" );
+        // self::trace( "stNextRound" );
 
         $players = $this->loadPlayersBasicInfos();
 
@@ -1827,20 +1658,7 @@ class phobycatcafe extends Table
 
     function stCleanBoardForNextRound()
     {
-        self::trace( "stCleanBoardForNextRound" );
-
-        // // Renew dices
-        // $sql = "DELETE FROM dice WHERE 1 = 1";
-        // self::DbQuery($sql);
-
-        // $values = array();
-        // for ($i=0; $i<=self::getPlayersNumber(); $i++) {
-        //     $values[] = "(".($i + 1).", ".bga_rand(1, 6).")";
-        // }
-
-        // $sql = "INSERT INTO dice (id, dice_value) VALUES ";
-        // $sql .= implode( $values, ',' );
-        // self::DbQuery( $sql );
+        // self::trace( "stCleanBoardForNextRound" );
 
         // Clear players turn datas
         $sql = "UPDATE player SET 
@@ -1892,7 +1710,7 @@ class phobycatcafe extends Table
 
     function stSetupNewRound()
     {
-        self::trace( "stSetupNewRound" );
+        // self::trace( "stSetupNewRound" );
 
         $sql = "SELECT player_id FROM player WHERE is_first_player = true";
         $current_first_player = self::getUniqueValueFromDB( $sql );
