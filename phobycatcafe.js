@@ -1605,7 +1605,7 @@ function (dojo, declare) {
             this.updateFootprintsState( notif.args.player_id, notif.args.footprint_used, notif.args.footprint_available );
             this.updateFootprintsCounters( notif.args.player_id, notif.args.footprint_used, notif.args.footprint_available );
 
-            // console.looog( '**** Notification : backToTurnDrawingPhase1 Ended' );
+            // console.log( '**** Notification : backToTurnDrawingPhase1 Ended' );
         },
    });             
 });
