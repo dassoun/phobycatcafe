@@ -356,7 +356,7 @@ class phobycatcafe extends Table
 
     function getCatHouseScoreTotal($player_id) {
 
-        $sql = "SELECT (score_cat_1 + score_cat_2 + score_cat_3 + score_cat_4 + score_cat_5 + score_cat_6) FROM player WHERE player_id = '$player_id'";
+        $sql = "SELECT (COALESCE(score_cat_1, 0) + COALESCE(score_cat_2, 0) + COALESCE(score_cat_3, 0) + COALESCE(score_cat_4, 0) + COALESCE(score_cat_5, 0) + COALESCE(score_cat_6, 0)) FROM player WHERE player_id = '$player_id'";
         $cat_house_score = self::getUniqueValueFromDB( $sql );
 
         // self::dump( "getCatHouseScoreTotal : ", $cat_house_score );

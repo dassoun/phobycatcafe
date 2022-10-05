@@ -45,12 +45,12 @@ ALTER TABLE `player` ADD `second_chosen_dice_num` tinyint(2) UNSIGNED DEFAULT NU
 ALTER TABLE `player` ADD `second_chosen_dice_val` tinyint(2) UNSIGNED DEFAULT NULL;
 ALTER TABLE `player` ADD `second_chosen_played_order` tinyint(2) UNSIGNED DEFAULT NULL;
 ALTER TABLE `player` ADD `location_chosen` varchar(5) DEFAULT NULL;
-ALTER TABLE `player` ADD `score_cat_1` tinyint(2) UNSIGNED NOT NULL DEFAULT '0';
-ALTER TABLE `player` ADD `score_cat_2` tinyint(2) UNSIGNED NOT NULL DEFAULT '0';
-ALTER TABLE `player` ADD `score_cat_3` tinyint(2) UNSIGNED NOT NULL DEFAULT '0';
-ALTER TABLE `player` ADD `score_cat_4` tinyint(2) UNSIGNED NOT NULL DEFAULT '0';
-ALTER TABLE `player` ADD `score_cat_5` tinyint(2) UNSIGNED NOT NULL DEFAULT '0';
-ALTER TABLE `player` ADD `score_cat_6` tinyint(2) UNSIGNED NOT NULL DEFAULT '0';
+ALTER TABLE `player` ADD `score_cat_1` tinyint(2) UNSIGNED DEFAULT NULL;
+ALTER TABLE `player` ADD `score_cat_2` tinyint(2) UNSIGNED DEFAULT NULL;
+ALTER TABLE `player` ADD `score_cat_3` tinyint(2) UNSIGNED DEFAULT NULL;
+ALTER TABLE `player` ADD `score_cat_4` tinyint(2) UNSIGNED DEFAULT NULL;
+ALTER TABLE `player` ADD `score_cat_5` tinyint(2) UNSIGNED DEFAULT NULL;
+ALTER TABLE `player` ADD `score_cat_6` tinyint(2) UNSIGNED DEFAULT NULL;
 ALTER TABLE `player` ADD `score_col_1` tinyint(2) UNSIGNED NOT NULL DEFAULT '0';
 ALTER TABLE `player` ADD `score_col_2` tinyint(2) UNSIGNED NOT NULL DEFAULT '0';
 ALTER TABLE `player` ADD `score_col_3` tinyint(2) UNSIGNED NOT NULL DEFAULT '0';

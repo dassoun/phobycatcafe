@@ -323,6 +323,16 @@ function (dojo, declare) {
                 }
             }
 
+            // Cat scores (for cat houses)
+            for( var player_id in gamedatas.players ) {
+                for (var i=1; i<=6; i++) {
+                    var cat_score = gamedatas.players[player_id]["score_cat_"+i];
+                    if (cat_score != null) {
+                        dojo.byId("sub_scoring_" + player_id + "_" + i).innerHTML = cat_score;
+                    }
+                }
+            }
+
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
 
@@ -448,7 +458,7 @@ function (dojo, declare) {
 
                     if( this.isCurrentPlayerActive() ) {
                         for ( var id in args.args.score_cat ) {
-                            if ( args.args.score_cat[id] == 0 ) {
+                            if ( args.args.score_cat[id] == null ) {
                                 let elmt_id = 'cat_selection_' + player_id + '_'+ (parseInt(id) + 1);
                                 let elmt = $(elmt_id);
 
@@ -1010,7 +1020,7 @@ function (dojo, declare) {
 
             for ( var id in args.score_cat ) {
                 console.log( args.score_cat );
-                if ( args.score_cat[id] == 0 ) {
+                if ( args.score_cat[id] == null ) {
                     dojo.addClass( 'cat_selection_' + player_id + '_'+ (parseInt(id) + 1), 'ctc_cat_selectionnable');
                 }
             }
