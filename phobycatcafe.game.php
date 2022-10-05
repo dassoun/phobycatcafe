@@ -1766,7 +1766,7 @@ class phobycatcafe extends Table
                     $dices = self::getObjectListFromDB( $sql );
 
                     $nb = count($dices);
-                    $dice_number = rand(0, ($nb-1));
+                    $dice_number = bga_rand(0, ($nb-1));
 
                     $this->pickDice( $dices[$dice_number]["id"], $dices[$dice_number]["dice_value"] );
 
