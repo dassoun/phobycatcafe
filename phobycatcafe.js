@@ -539,13 +539,11 @@ function (dojo, declare) {
                 dojo.forEach(this.connections, dojo.disconnect);
                 this.connections = [];
 
-                playersBasicInfos = this.gamedatas.gamestate.args.playersBasicInfos;
-                for ( var player_id in playersBasicInfos ) {
-                    for (let i=1; i<=6; i++) {
-                        dojo.removeClass('shape_selection_'+player_id+'_'+i, 'ctc_shape_selectionnable');
-                    }
+                var player_id = this.getActivePlayerId();
+                for (let i=1; i<=6; i++) {
+                    dojo.removeClass('shape_selection_'+player_id+'_'+i, 'ctc_shape_selectionnable');
                 }
-
+                
                 break;
 
             case 'playerTurnCatSelection':
