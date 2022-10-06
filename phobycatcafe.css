@@ -125,6 +125,7 @@
     background-image: url( 'img/35_35_dice.png' );
     background-repeat: no-repeat;
     z-index: 500;
+    /* box-sizing: border-box; */
 }
 
 .ctc_dice_clickable {
@@ -141,9 +142,13 @@
 
 .ctc_dice_player {
     position: relative;
-    border: 1px;
-    border-style: dashed;
+    /* border: 1px dashed black; */
+    border: 1px solid transparent;
     border-radius: 5px;
+}
+
+.ctc_dice_player_selectionnable {
+    border: 1px dashed black;
 }
 
 .ctc_selected {
@@ -160,7 +165,7 @@
     border: 1px;
     border-style: dashed;
     border-radius: 5px; */
-    border-color: rgba(255, 0, 0, 1);
+    border: 1px dashed red;
 }
 
 .cc_hex {
@@ -189,16 +194,13 @@
     position: relative;
     height: 30px;
     width: 55px;
-    border: 1px;
-    border-style: dashed;
+    border: 1px solid transparent;
     border-radius: 5px;
 }
 
 .ctc_shape_selectionnable {
     cursor: pointer;
-    /*border: 1px;
-    border-style: dashed;
-    border-radius: 5px;*/
+    border: 1px dashed black;
 }
 
 .ctc_cat_footprint {
@@ -218,13 +220,13 @@
     position: relative;
     height: 82px;
     width: 42px;
-    border: 1px;
-    border-style: dashed;
+    border: 1px solid transparent;
     border-radius: 5px;
 }
 
 .ctc_cat_selectionnable {
     cursor: pointer;
+    border: 1px dashed black;
 }
 
 .ctc_sub_scoring {

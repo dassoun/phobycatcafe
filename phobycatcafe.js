@@ -404,6 +404,8 @@ function (dojo, declare) {
                             let elmt_id = 'dice_player_'+player_id+'_'+i;
                             let elmt = $(elmt_id);
 
+                            dojo.addClass( elmt_id, 'ctc_dice_player_selectionnable' );
+
                             this.connections.push( dojo.connect( elmt , 'click', () => this.onClickPlayerDice(elmt_id) ) );
                         }
                     }
@@ -515,6 +517,14 @@ function (dojo, declare) {
                 break;
 
             case 'playerTurnDrawingPhase1':
+                var player_id = this.getActivePlayerId();
+                for (let i=0; i<2; i++) {
+                    let elmt_id = 'dice_player_'+player_id+'_'+i;
+                    let elmt = $(elmt_id);
+
+                    dojo.removeClass( elmt_id, 'ctc_dice_player_selectionnable' );
+                }
+                            
                 dojo.forEach(this.connections, dojo.disconnect);
                 this.connections = [];
                 break;
